@@ -22,6 +22,8 @@ export interface Car {
   seats: number;
   features: string[];
   description: LocalizedText;
+  isVisible: boolean;
+  isFeatured: boolean;
 }
 
 export interface Testimonial {

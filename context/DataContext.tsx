@@ -107,7 +107,16 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // --- CAR ACTIONS ---
   const addCar = async (car: Omit<Car, 'id'>) => {
-    const { data, error } = await supabase.from('cars').insert([car]).select();
+    // Add default values for new fields
+    const newCar: Omit<Car, 'id'> = {
+      ...car,
+      imageUrl: car.imageUrl || '', // Default to empty string if not provided
+      gallery: car.gallery || [],   // Default to empty array if not provided
+      isVisible: car.isVisible ?? true, // Default to true if not provided
+      isFeatured: car.isFeatured ?? false // Default to false if not provided
+    };
+
+    const { data, error } = await supabase.from('cars').insert([newCar]).select();
     if (error) throw error;
     if (data) setCars([data[0], ...cars]);
   };

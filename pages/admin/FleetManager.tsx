@@ -1,10 +1,9 @@
-
 import React, { useState, useRef } from 'react';
 import { AdminLayout } from '../../components/AdminLayout';
 import { useData } from '../../context/DataContext';
 import { Button } from '../../components/Button';
 import { Car, CarCategory } from '../../types';
-import { Plus, Edit2, Trash2, X, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Loader2, Eye, EyeOff, Star, MoreVertical } from 'lucide-react';
 import {
   DndContext,
   closestCenter,
@@ -79,6 +78,69 @@ const SortableImage = ({
   );
 };
 
+// --- Action Menu Component ---
+const ActionMenu = ({
+  car,
+  onToggleStatus,
+  onDelete
+}: {
+  car: Car;
+  onToggleStatus: (car: Car, field: 'isVisible' | 'isFeatured') => void;
+  onDelete: (id: string) => void;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={menuRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="p-2 hover:bg-white/10 rounded-full text-neutral-400 hover:text-white transition-colors"
+      >
+        <MoreVertical size={18} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-48 bg-dark-800 border border-white/10 rounded-lg shadow-xl z-20 overflow-hidden">
+          <button
+            onClick={() => { onToggleStatus(car, 'isVisible'); setIsOpen(false); }}
+            className="w-full text-left px-4 py-3 text-sm text-neutral-300 hover:bg-white/5 flex items-center gap-2"
+          >
+            {car.isVisible ? <><Eye size={16} className="text-green-400" /> Hide Vehicle</> : <><EyeOff size={16} className="text-neutral-500" /> Show Vehicle</>}
+          </button>
+
+          <button
+            onClick={() => { onToggleStatus(car, 'isFeatured'); setIsOpen(false); }}
+            className="w-full text-left px-4 py-3 text-sm text-neutral-300 hover:bg-white/5 flex items-center gap-2"
+          >
+            <Star size={16} className={car.isFeatured ? "text-gold-500 fill-gold-500" : "text-neutral-500"} />
+            {car.isFeatured ? 'Unfeature' : 'Feature'}
+          </button>
+
+          <div className="border-t border-white/5 my-1"></div>
+
+          <button
+            onClick={() => { onDelete(car.id); setIsOpen(false); }}
+            className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-red-400/10 flex items-center gap-2"
+          >
+            <Trash2 size={16} /> Delete Vehicle
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const FleetManager: React.FC = () => {
   const { cars, addCar, updateCar, deleteCar, uploadImage } = useData();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -107,7 +169,9 @@ export const FleetManager: React.FC = () => {
     topSpeed: '',
     seats: 2,
     features: [],
-    description: { en: '', ar: '' }
+    description: { en: '', ar: '' },
+    isVisible: true,
+    isFeatured: false
   };
 
   const [formData, setFormData] = useState<Car>(emptyCar);
@@ -139,8 +203,6 @@ export const FleetManager: React.FC = () => {
     }
     setIsModalOpen(false);
   };
-
-
 
   const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length) return;
@@ -191,6 +253,11 @@ export const FleetManager: React.FC = () => {
     setFormData({ ...formData, features: newFeatures });
   };
 
+  const handleStatusToggle = async (car: Car, field: 'isVisible' | 'isFeatured') => {
+    const updatedCar = { ...car, [field]: !car[field] };
+    await updateCar(updatedCar);
+  };
+
   return (
     <AdminLayout>
       <div className="flex justify-between items-center mb-8">
@@ -210,13 +277,20 @@ export const FleetManager: React.FC = () => {
               <p className="text-neutral-400">{car.model}</p>
               <span className="text-gold-500 text-sm font-medium">{car.category}</span>
             </div>
-            <div className="flex items-center gap-3">
-              <button onClick={() => openEditModal(car)} className="p-2 hover:bg-white/10 rounded-full text-blue-400">
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => openEditModal(car)}
+                className="p-2 hover:bg-blue-500/10 text-blue-400 rounded-full transition-colors mr-1"
+                title="Edit Vehicle"
+              >
                 <Edit2 size={18} />
               </button>
-              <button onClick={() => deleteCar(car.id)} className="p-2 hover:bg-white/10 rounded-full text-red-400">
-                <Trash2 size={18} />
-              </button>
+
+              <ActionMenu
+                car={car}
+                onToggleStatus={handleStatusToggle}
+                onDelete={deleteCar}
+              />
             </div>
           </div>
         ))}
@@ -233,6 +307,22 @@ export const FleetManager: React.FC = () => {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="md:col-span-2 flex gap-8 p-4 bg-dark-900 border border-white/5 rounded">
+                  <label className="flex items-center gap-3 cursor-pointer group">
+                    <div className={`w-5 h-5 rounded border flex items-center justify-center ${formData.isVisible ? 'bg-green-500 border-green-500' : 'border-neutral-500'}`}>
+                      {formData.isVisible && <Eye size={12} className="text-black" />}
+                    </div>
+                    <input type="checkbox" checked={formData.isVisible} onChange={e => setFormData({ ...formData, isVisible: e.target.checked })} className="hidden" />
+                    <span className="text-white text-sm group-hover:text-green-400 transition-colors">Visible on Website</span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer group">
+                    <div className={`w-5 h-5 rounded border flex items-center justify-center ${formData.isFeatured ? 'bg-gold-500 border-gold-500' : 'border-neutral-500'}`}>
+                      {formData.isFeatured && <Star size={12} className="text-black" fill="currentColor" />}
+                    </div>
+                    <input type="checkbox" checked={formData.isFeatured} onChange={e => setFormData({ ...formData, isFeatured: e.target.checked })} className="hidden" />
+                    <span className="text-white text-sm group-hover:text-gold-500 transition-colors">Featured Car</span>
+                  </label>
+                </div>
                 <div>
                   <label className="block text-neutral-400 text-sm mb-1">Name</label>
                   <input type="text" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="w-full bg-dark-900 border border-white/10 rounded p-2 text-white" />

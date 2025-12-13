@@ -19,6 +19,7 @@ import { AdminLogin } from './pages/admin/AdminLogin';
 import { FleetManager } from './pages/admin/FleetManager';
 import { FaqManager } from './pages/admin/FaqManager';
 import { ContactManager } from './pages/admin/ContactManager';
+import { DashboardOverview } from './pages/admin/DashboardOverview';
 
 const AppContent: React.FC = () => {
   const [lang, setLang] = useState<Language>('en');
@@ -40,7 +41,7 @@ const AppContent: React.FC = () => {
           <Route path="/admin/*" element={null} />
           <Route path="*" element={<Navbar lang={lang} setLang={setLang} />} />
         </Routes>
-        
+
         <main className="flex-grow">
           <Routes>
             {/* Public Routes */}
@@ -54,7 +55,7 @@ const AppContent: React.FC = () => {
 
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<FleetManager />} /> {/* Default to fleet for now as dash */}
+            <Route path="/admin/dashboard" element={<DashboardOverview />} />
             <Route path="/admin/fleet" element={<FleetManager />} />
             <Route path="/admin/faqs" element={<FaqManager />} />
             <Route path="/admin/contact" element={<ContactManager />} />
@@ -62,13 +63,13 @@ const AppContent: React.FC = () => {
         </main>
 
         <Routes>
-           <Route path="/admin/*" element={null} />
-           <Route path="*" element={<Footer lang={lang} />} />
+          <Route path="/admin/*" element={null} />
+          <Route path="*" element={<Footer lang={lang} />} />
         </Routes>
-        
+
         <Routes>
-           <Route path="/admin/*" element={null} />
-           <Route path="*" element={<WhatsAppButton />} />
+          <Route path="/admin/*" element={null} />
+          <Route path="*" element={<WhatsAppButton />} />
         </Routes>
       </div>
     </Router>
