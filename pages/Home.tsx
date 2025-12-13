@@ -18,8 +18,10 @@ export const Home: React.FC<HomeProps> = ({ lang }) => {
   const { cars, faqs, contactInfo } = useData();
   const [openFaq, setOpenFaq] = useState<string | null>(null);
 
-  // Get a curated list for the homepage (first 3 cars)
-  const featuredCars = cars.slice(0, 3);
+  // Get a curated list for the homepage (Featured cars only)
+  // If no cars are featured, fallback to first 3 visible cars
+  const featuredList = cars.filter(c => c.isVisible && c.isFeatured);
+  const featuredCars = featuredList.length > 0 ? featuredList : cars.filter(c => c.isVisible).slice(0, 3);
 
   const iconMap: Record<string, React.ElementType> = {
     UserCheck,

@@ -60,7 +60,13 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         .order('created_at', { ascending: false });
 
       if (carsData && carsData.length > 0) {
-        setCars(carsData);
+        // Map DB snake_case/lowercase to camelCase
+        const mappedCars: Car[] = carsData.map((dbCar: any) => ({
+          ...dbCar,
+          isVisible: dbCar.isvisible ?? true, // Handle existing records that might be null
+          isFeatured: dbCar.isfeatured ?? false
+        }));
+        setCars(mappedCars);
       } else if (!carsError) {
         // SEED DATA IF EMPTY
         await seedData();
@@ -107,24 +113,69 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // --- CAR ACTIONS ---
   const addCar = async (car: Omit<Car, 'id'>) => {
-    // Add default values for new fields
-    const newCar: Omit<Car, 'id'> = {
-      ...car,
-      imageUrl: car.imageUrl || '', // Default to empty string if not provided
-      gallery: car.gallery || [],   // Default to empty array if not provided
-      isVisible: car.isVisible ?? true, // Default to true if not provided
-      isFeatured: car.isFeatured ?? false // Default to false if not provided
+    // Add default values and map to lowercase DB columns
+    const dbCar = {
+      name: car.name,
+      model: car.model,
+      category: car.category,
+      pricePerDay: car.pricePerDay,
+      imageUrl: car.imageUrl || '',
+      gallery: car.gallery || [],
+      engine: car.engine,
+      zeroToSixty: car.zeroToSixty,
+      topSpeed: car.topSpeed,
+      seats: car.seats,
+      features: car.features,
+      description: car.description,
+      isvisible: car.isVisible ?? true,   // Map to lowercase
+      isfeatured: car.isFeatured ?? false // Map to lowercase
     };
 
-    const { data, error } = await supabase.from('cars').insert([newCar]).select();
+    const { data, error } = await supabase.from('cars').insert([dbCar]).select();
     if (error) throw error;
-    if (data) setCars([data[0], ...cars]);
+
+    // Map back to camelCase for local state
+    if (data) {
+      const newCarLocal: Car = {
+        ...data[0],
+        isVisible: data[0].isvisible,
+        isFeatured: data[0].isfeatured
+      };
+      setCars([newCarLocal, ...cars]);
+    }
   };
 
   const updateCar = async (updatedCar: Car) => {
-    const { error } = await supabase.from('cars').update(updatedCar).eq('id', updatedCar.id);
+    // Map to lowercase for DB update
+    const dbUpdate = {
+      name: updatedCar.name,
+      model: updatedCar.model,
+      category: updatedCar.category,
+      pricePerDay: updatedCar.pricePerDay,
+      imageUrl: updatedCar.imageUrl,
+      gallery: updatedCar.gallery,
+      engine: updatedCar.engine,
+      zeroToSixty: updatedCar.zeroToSixty,
+      topSpeed: updatedCar.topSpeed,
+      seats: updatedCar.seats,
+      features: updatedCar.features,
+      description: updatedCar.description,
+      isvisible: updatedCar.isVisible,    // Map to lowercase
+      isfeatured: updatedCar.isFeatured   // Map to lowercase
+    };
+
+    const { data, error } = await supabase.from('cars').update(dbUpdate).eq('id', updatedCar.id).select();
     if (error) throw error;
-    setCars(cars.map(c => c.id === updatedCar.id ? updatedCar : c));
+
+    // Map DB snake_case/lowercase to camelCase
+    if (data && data.length > 0) {
+      const mappedUpdatedCar: Car = {
+        ...data[0],
+        isVisible: data[0].isvisible ?? true, // Handle existing records that might be null
+        isFeatured: data[0].isfeatured ?? false
+      };
+      setCars(cars.map(c => c.id === mappedUpdatedCar.id ? mappedUpdatedCar : c));
+    }
   };
 
   const deleteCar = async (id: string) => {

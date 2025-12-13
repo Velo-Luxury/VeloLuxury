@@ -254,8 +254,17 @@ export const FleetManager: React.FC = () => {
   };
 
   const handleStatusToggle = async (car: Car, field: 'isVisible' | 'isFeatured') => {
-    const updatedCar = { ...car, [field]: !car[field] };
-    await updateCar(updatedCar);
+    try {
+      const updatedCar = { ...car, [field]: !car[field] };
+      await updateCar(updatedCar);
+    } catch (error: any) {
+      console.error("Toggle Error:", error);
+      if (error.message?.includes('column') || error.code === '42703') {
+        alert("Database Error: 'isVisible' or 'isFeatured' columns rely on a database update. Please run the SQL command provided.");
+      } else {
+        alert(`Failed to update status: ${error.message}`);
+      }
+    }
   };
 
   return (
