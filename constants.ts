@@ -4,7 +4,7 @@ import { Car, Offer, Testimonial, Service, FAQ, ContactInfo } from './types';
 export const CONTACT_INFO: ContactInfo = {
   phone: "60123456789",
   whatsapp: "60123456789",
-  email: "concierge@veloluxury.com",
+  email: "info@veloluxury.com",
   address: {
     en: "3 Towers, Jalan Ampang, 50450 Kuala Lumpur",
     ar: "أبراج 3، جالان أمبانج، 50450 كوالالمبور"

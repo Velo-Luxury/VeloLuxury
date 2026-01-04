@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Twitter, Phone, Mail, MapPin } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Phone, Mail, MapPin, Linkedin } from 'lucide-react';
 import { Language } from '../types';
 import { TRANSLATIONS } from '../constants';
 import { useData } from '../context/DataContext';
@@ -19,20 +19,20 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
     <footer className="bg-black border-t border-white/10 pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          
+
           {/* Brand Column */}
           <div className="col-span-1 md:col-span-1">
-             <Link to="/" className="inline-block mb-6">
-               <Logo />
-             </Link>
-            
+            <Link to="/" className="inline-block mb-6">
+              <Logo />
+            </Link>
+
             <p className="text-neutral-400 text-sm leading-relaxed mb-6">
               {t.footer.tagline}
             </p>
             <div className="flex space-x-4 rtl:space-x-reverse">
-              <a href="#" className="text-gold-500 hover:text-white transition-colors"><Instagram size={20} /></a>
-              <a href="#" className="text-gold-500 hover:text-white transition-colors"><Facebook size={20} /></a>
-              <a href="#" className="text-gold-500 hover:text-white transition-colors"><Twitter size={20} /></a>
+              <a href="https://www.instagram.com/velocarrental/" className="text-gold-500 hover:text-white transition-colors"><Instagram size={20} /></a>
+              <a href="https://www.facebook.com/veloluxury" className="text-gold-500 hover:text-white transition-colors"><Facebook size={20} /></a>
+              <a href="https://www.linkedin.com/company/velo-luxury/" className="text-gold-500 hover:text-white transition-colors"><Linkedin size={20} /></a>
             </div>
           </div>
 
@@ -77,14 +77,14 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
             </ul>
           </div>
         </div>
-
+        {/* 
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-neutral-500">{t.footer.copyright}</p>
           <div className="flex items-center gap-4">
              <p className="text-xs text-neutral-600">Designed for Excellence.</p>
              <Link to="/admin" className="text-[10px] text-neutral-800 hover:text-gold-500 transition-colors">Admin</Link>
           </div>
-        </div>
+        </div> */}
       </div>
     </footer>
   );
