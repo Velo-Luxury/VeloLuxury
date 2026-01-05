@@ -1,13 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import { JournalPost } from '../../types';
-import { Plus, Trash2, Edit2, Save, X } from 'lucide-react';
+import { Plus, Trash2, Edit2, Save, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { AdminLayout } from '../../components/AdminLayout';
+import { useData } from '../../context/DataContext';
+import { SmartTextButton, SmartImageButton } from '../../components/admin/SmartButtons';
 
 export const JournalManager: React.FC = () => {
+    const { uploadImage } = useData();
     const [posts, setPosts] = useState<JournalPost[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingPost, setEditingPost] = useState<Partial<JournalPost> | null>(null);
+    const [uploading, setUploading] = useState(false);
+
+    // File input ref
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         fetchPosts();
@@ -73,6 +80,39 @@ export const JournalManager: React.FC = () => {
             console.error('Error deleting post:', error);
         }
     };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files?.length || !editingPost) return;
+
+        setUploading(true);
+        try {
+            const file = e.target.files[0];
+            const url = await uploadImage(file, 'journal');
+
+            setEditingPost(prev => ({ ...prev!, imageUrl: url }));
+        } catch (error) {
+            console.error('Upload failed:', error);
+            alert('Failed to upload image. Make sure "journal" storage bucket exists and is public.');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    // AI Prompts
+    const genContentPrompt = (lang: 'en' | 'ar') => {
+        const title = lang === 'en' ? editingPost?.title?.en : editingPost?.title?.ar;
+        if (!title) return '';
+        const base = `Write a comprehensive, engaging luxury lifestyle blog post geared towards high-net-worth individuals about "${title}".`;
+        return lang === 'en'
+            ? `${base} Use Markdown formatting (headings, lists). Tone: Sophisticated, exclusive. English.`
+            : `${base} Use Markdown formatting. Tone: Sophisticated, exclusive. Arabic.`;
+    };
+
+    const genImagePrompt = () => {
+        if (!editingPost?.title?.en) return '';
+        return `Editorial magazine style illustration for a luxury article about "${editingPost.title.en}", high fashion, elegant, cinematic lighting, 8k.`;
+    };
+
 
     return (
         <AdminLayout>
@@ -160,21 +200,47 @@ export const JournalManager: React.FC = () => {
                                 />
                             </div>
 
-                            <div>
-                                <label className="block text-xs uppercase tracking-wider text-neutral-500 mb-1">Image URL</label>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="text"
-                                        value={editingPost.imageUrl || ''}
-                                        onChange={e => setEditingPost({ ...editingPost, imageUrl: e.target.value })}
-                                        className="w-full bg-dark-800 border border-white/10 rounded p-2 text-white focus:border-gold-500 outline-none"
-                                    />
-                                    {editingPost.imageUrl && <img src={editingPost.imageUrl} alt="Preview" className="w-10 h-10 object-cover rounded" />}
+                            <div className="border-t border-b border-white/5 py-4 my-2">
+                                <label className="block text-xs uppercase tracking-wider text-neutral-500 mb-2">Featured Image</label>
+                                <div className="flex gap-4 items-start">
+                                    {editingPost.imageUrl && (
+                                        <img src={editingPost.imageUrl} alt="Preview" className="w-24 h-24 object-cover rounded border border-white/10" />
+                                    )}
+                                    <div className="flex-grow flex flex-col items-start gap-2">
+                                        <SmartImageButton
+                                            prompt={genImagePrompt()}
+                                            bucket="journal"
+                                            onImageGenerated={(url) => setEditingPost(prev => ({ ...prev!, imageUrl: url }))}
+                                        />
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                onChange={handleImageUpload}
+                                                className="hidden"
+                                                accept="image/*"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => fileInputRef.current?.click()}
+                                                disabled={uploading}
+                                                className="text-xs text-neutral-400 hover:text-white underline"
+                                            >
+                                                or upload manually
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-xs uppercase tracking-wider text-neutral-500 mb-1">Content (EN) - Use Markdown</label>
+                                <div className="flex justify-between items-center mb-1">
+                                    <label className="block text-xs uppercase tracking-wider text-neutral-500">Content (EN) - Use Markdown</label>
+                                    <SmartTextButton
+                                        prompt={genContentPrompt('en')}
+                                        onGenerate={(text) => setEditingPost(prev => ({ ...prev!, content: { ...prev!.content!, en: text } }))}
+                                    />
+                                </div>
                                 <textarea
                                     value={editingPost.content?.en || ''}
                                     onChange={e => setEditingPost({ ...editingPost, content: { ...editingPost.content!, en: e.target.value } })}
@@ -182,7 +248,13 @@ export const JournalManager: React.FC = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs uppercase tracking-wider text-neutral-500 mb-1">Content (AR) - Use Markdown</label>
+                                <div className="flex justify-between items-center mb-1">
+                                    <label className="block text-xs uppercase tracking-wider text-neutral-500">Content (AR) - Use Markdown</label>
+                                    <SmartTextButton
+                                        prompt={genContentPrompt('ar')}
+                                        onGenerate={(text) => setEditingPost(prev => ({ ...prev!, content: { ...prev!.content!, ar: text } }))}
+                                    />
+                                </div>
                                 <textarea
                                     value={editingPost.content?.ar || ''}
                                     onChange={e => setEditingPost({ ...editingPost, content: { ...editingPost.content!, ar: e.target.value } })}

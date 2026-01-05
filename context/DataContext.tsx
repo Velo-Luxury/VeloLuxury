@@ -23,7 +23,7 @@ interface DataContextType {
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
 
-  uploadImage: (file: File) => Promise<string>;
+  uploadImage: (file: File, bucket?: string) => Promise<string>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -185,22 +185,22 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   // --- IMAGE UPLOAD ACTION ---
-  const uploadImage = async (file: File): Promise<string> => {
+  const uploadImage = async (file: File, bucket: string = 'cars'): Promise<string> => {
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = `${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('cars')
+        .from(bucket)
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
-      const { data } = supabase.storage.from('cars').getPublicUrl(filePath);
+      const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
       return data.publicUrl;
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error(`Error uploading image to ${bucket}:`, error);
       throw error;
     }
   };

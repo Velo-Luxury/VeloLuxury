@@ -21,6 +21,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { SmartTextButton, SmartImageButton } from '../../components/admin/SmartButtons';
 
 // --- Sortable Image Component ---
 const SortableImage = ({
@@ -210,7 +211,7 @@ export const FleetManager: React.FC = () => {
     setUploading(true);
     try {
       const files = Array.from(e.target.files);
-      const uploadPromises = files.map(file => uploadImage(file));
+      const uploadPromises = files.map(file => uploadImage(file, 'cars'));
       const urls = await Promise.all(uploadPromises);
 
       setFormData(prev => ({
@@ -264,6 +265,85 @@ export const FleetManager: React.FC = () => {
       } else {
         alert(`Failed to update status: ${error.message}`);
       }
+    }
+  };
+
+  // AI Helpers
+  const [generationColor, setGenerationColor] = useState('Black');
+
+  // BRAND IDENTITY CONTEXT
+  const VELO_SCENE_CONTEXT = "in a high-end, dark luxury showroom with glossy black reflective floors, warm ambient golden lighting, cinematic 8k resolution, sleek and modern atmosphere, photorealistic.";
+
+  const generateDescription = (lang: 'en' | 'ar') => {
+    const base = `Write a luxurious, high-end car description for a ${formData.name} ${formData.model}.`;
+    return lang === 'en'
+      ? `${base} Focus on performance, comfort, and prestige. Max 3 sentences. English.`
+      : `${base} Focus on performance, comfort, and prestige. Max 3 sentences. Arabic.`;
+  };
+
+  const generateFeaturesPrompt = () => {
+    return `List 4 key features (comma separated) for a ${formData.name} ${formData.model}. No numbering, just text. Example: Starlight Headliner, Massage Seats, V12 Engine`;
+  };
+
+  const generateSpecsPrompt = () => {
+    return `Return a valid JSON object (no markdown formatting, just raw JSON) for a ${formData.name} ${formData.model} with these exact keys: "engine" (string), "zeroToSixty" (string, e.g. "3.5s"), "topSpeed" (string, e.g. "250 km/h"), "seats" (number).`;
+  };
+
+  const generateImagePrompt = () => {
+    // Smart Missing Angle Logic
+    const currentCount = formData.gallery.length;
+    const angles = [
+      `Front 3/4 view of a ${generationColor} ${formData.name} ${formData.model} with license plate clearly reading "VELO LUXURY"`,
+      `Side profile view of a ${generationColor} ${formData.name} ${formData.model}`,
+      `Rear 3/4 view of a ${generationColor} ${formData.name} ${formData.model} with license plate clearly reading "VELO LUXURY"`,
+      `Interior driver seat view of a ${generationColor} ${formData.name} ${formData.model}, showing steering wheel and dashboard details`
+    ];
+
+    // If we have less than 4 images, generate the next specific angle contextually
+    if (currentCount < 4) {
+      return `${angles[currentCount]}, ${VELO_SCENE_CONTEXT}`;
+    }
+
+    // Fallback for extra images
+    return `Cinematic, photorealistic outdoor shot of a ${generationColor} ${formData.name} ${formData.model} luxury car, majestic lighting, 8k resolution, automotive photography style, shallow depth of field.`;
+  };
+
+  // BATCH GENERATION
+  const handleGenerateGallerySet = async () => {
+    if (!formData.name) return alert("Please enter Car Name first.");
+
+    setUploading(true); // Reuse uploading state
+    try {
+      const angles = [
+        `Front 3/4 view of a ${generationColor} ${formData.name} ${formData.model} with license plate reading "VELO LUXURY"`,
+        `Side profile view of a ${generationColor} ${formData.name} ${formData.model}`,
+        `Rear 3/4 view of a ${generationColor} ${formData.name} ${formData.model} with license plate reading "VELO LUXURY"`,
+        `Interior driver seat view of a ${generationColor} ${formData.name} ${formData.model}, showing steering wheel and dashboard details`
+      ];
+
+      // We need to import generateImage from gemini directly to loop here
+      const { generateImage } = await import('../../lib/gemini');
+
+      const uploadPromises = angles.map(async (angleDescription) => {
+        const fullPrompt = `${angleDescription}, ${VELO_SCENE_CONTEXT}`;
+        const blob = await generateImage(fullPrompt);
+        const fileName = `ai-gen-${Date.now()}-${Math.random().toString(36).substring(7)}.png`;
+        const file = new File([blob], fileName, { type: 'image/png' });
+        return uploadImage(file, 'cars');
+      });
+
+      const newUrls = await Promise.all(uploadPromises);
+
+      setFormData(prev => ({
+        ...prev,
+        gallery: [...prev.gallery, ...newUrls]
+      }));
+
+    } catch (error) {
+      console.error(error);
+      alert(`Failed to generate gallery set: ${error instanceof Error ? error.message : "Unknown error"}`);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -355,6 +435,30 @@ export const FleetManager: React.FC = () => {
                 </div>
 
                 {/* Specs */}
+                <div className="md:col-span-2 flex items-center justify-between border-b border-white/10 pb-2 mt-2">
+                  <h3 className="text-white text-lg font-serif">Technical Specifications</h3>
+                  <SmartTextButton
+                    label="Auto-Fill Specs"
+                    prompt={generateSpecsPrompt()}
+                    onGenerate={(text) => {
+                      try {
+                        const cleanText = text.replace(/```json|```/g, '').trim();
+                        const data = JSON.parse(cleanText);
+                        setFormData(prev => ({
+                          ...prev,
+                          engine: data.engine || prev.engine,
+                          zeroToSixty: data.zeroToSixty || prev.zeroToSixty,
+                          topSpeed: data.topSpeed || prev.topSpeed,
+                          seats: data.seats || prev.seats
+                        }));
+                      } catch (e) {
+                        alert("Failed to parse specs data. Please try again.");
+                        console.error(e);
+                      }
+                    }}
+                    disabled={!formData.name || !formData.model}
+                  />
+                </div>
                 <div>
                   <label className="block text-neutral-400 text-sm mb-1">Engine</label>
                   <input type="text" required value={formData.engine} onChange={e => setFormData({ ...formData, engine: e.target.value })} className="w-full bg-dark-900 border border-white/10 rounded p-2 text-white" />
@@ -376,11 +480,25 @@ export const FleetManager: React.FC = () => {
               {/* Descriptions */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-neutral-400 text-sm mb-1">Description (EN)</label>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="block text-neutral-400 text-sm">Description (EN)</label>
+                    <SmartTextButton
+                      prompt={generateDescription('en')}
+                      onGenerate={(text) => setFormData(prev => ({ ...prev, description: { ...prev.description, en: text } }))}
+                      disabled={!formData.name || !formData.model}
+                    />
+                  </div>
                   <textarea rows={3} value={formData.description.en} onChange={e => setFormData({ ...formData, description: { ...formData.description, en: e.target.value } })} className="w-full bg-dark-900 border border-white/10 rounded p-2 text-white"></textarea>
                 </div>
                 <div>
-                  <label className="block text-neutral-400 text-sm mb-1">Description (AR)</label>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="block text-neutral-400 text-sm">Description (AR)</label>
+                    <SmartTextButton
+                      prompt={generateDescription('ar')}
+                      onGenerate={(text) => setFormData(prev => ({ ...prev, description: { ...prev.description, ar: text } }))}
+                      disabled={!formData.name || !formData.model}
+                    />
+                  </div>
                   <textarea rows={3} dir="rtl" value={formData.description.ar} onChange={e => setFormData({ ...formData, description: { ...formData.description, ar: e.target.value } })} className="w-full bg-dark-900 border border-white/10 rounded p-2 text-white"></textarea>
                 </div>
               </div>
@@ -388,6 +506,42 @@ export const FleetManager: React.FC = () => {
               {/* GALLERY UPLOAD & DND */}
               <div>
                 <label className="block text-neutral-400 text-sm mb-2">Gallery Images (Drag to Reorder - First is Main)</label>
+
+                {/* AI Gallery Controls */}
+                <div className="bg-dark-900 border border-gold-500/20 rounded p-3 mb-4 flex flex-wrap items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-gold-500 text-xs font-bold uppercase tracking-wider">AI Generation</span>
+                    <select
+                      value={generationColor}
+                      onChange={(e) => setGenerationColor(e.target.value)}
+                      className="bg-dark-800 border border-white/10 rounded px-2 py-1 text-xs text-white w-32 focus:border-gold-500 outline-none appearance-none cursor-pointer"
+                    >
+                      <option value="Onyx Black">Onyx Black</option>
+                      <option value="Crystal White">Crystal White</option>
+                      <option value="Silver Metallic">Silver Metallic</option>
+                      <option value="Midnight Blue">Midnight Blue</option>
+                      <option value="Emerald Green">Emerald Green</option>
+                      <option value="Gunmetal Grey">Gunmetal Grey</option>
+                      <option value="Burgundy Red">Burgundy Red</option>
+                      <option value="Gold">Gold</option>
+                    </select>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleGenerateGallerySet}
+                    disabled={uploading || !formData.name || !formData.model || !generationColor}
+                    className={`text-black text-xs font-bold px-3 py-1.5 rounded flex items-center gap-2 transition-colors shadow-lg ${!formData.name || !formData.model || !generationColor
+                      ? 'bg-neutral-600 cursor-not-allowed text-neutral-400'
+                      : 'bg-gold-500 hover:bg-gold-400 shadow-gold-500/10'
+                      }`}
+                    title={!formData.name || !formData.model || !generationColor ? "Enter Name, Model, and Color first" : "Generate Gallery"}
+                  >
+                    {uploading ? <Loader2 className="animate-spin" size={14} /> : <Star size={14} fill={!formData.name || !formData.model || !generationColor ? "currentColor" : "black"} />}
+                    Generate Full Gallery Set (4 Angles)
+                  </button>
+                  <span className="text-[10px] text-neutral-500 hidden md:inline">Generates Front, Side, Rear, Interior angles with Velo identity.</span>
+                </div>
 
                 <DndContext
                   sensors={sensors}
@@ -421,19 +575,47 @@ export const FleetManager: React.FC = () => {
                   </SortableContext>
                 </DndContext>
 
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  ref={galleryInputRef}
-                  onChange={handleGalleryUpload}
-                  className="hidden"
-                />
+                <div className="flex gap-2 items-center mt-2 justify-end">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    ref={galleryInputRef}
+                    onChange={handleGalleryUpload}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => galleryInputRef.current?.click()}
+                    className="text-xs text-neutral-500 hover:text-white underline"
+                  >
+                    Upload manual images
+                  </button>
+                  <span className="text-neutral-600">|</span>
+                  <SmartImageButton
+                    prompt={generateImagePrompt()}
+                    bucket="cars"
+                    label="Gen Single Image"
+                    onImageGenerated={(url) => setFormData(prev => ({ ...prev, gallery: [...prev.gallery, url] }))}
+                    disabled={!formData.name || !formData.model || !generationColor}
+                  />
+                </div>
               </div>
 
               {/* Features */}
               <div>
-                <label className="block text-neutral-400 text-sm mb-2">Features</label>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-neutral-400 text-sm">Features</label>
+                  <SmartTextButton
+                    label="Auto-Fill Features"
+                    prompt={generateFeaturesPrompt()}
+                    onGenerate={(text) => {
+                      const feats = text.split(',').map(s => s.trim()).filter(Boolean);
+                      setFormData(prev => ({ ...prev, features: feats }));
+                    }}
+                    disabled={!formData.name || !formData.model}
+                  />
+                </div>
                 <div className="grid grid-cols-2 gap-2">
                   {formData.features.map((feat, idx) => (
                     <input key={idx} type="text" value={feat} onChange={e => handleFeatureChange(idx, e.target.value)} className="w-full bg-dark-900 border border-white/10 rounded p-2 text-white" />

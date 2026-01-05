@@ -1,14 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Service } from '../../types';
-import { Plus, Trash2, Edit2, Save, X, Briefcase } from 'lucide-react';
+import { Plus, Trash2, Edit2, Save, X, Briefcase, Image as ImageIcon, Loader2 } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { AdminLayout } from '../../components/AdminLayout';
+import { useData } from '../../context/DataContext';
+import { SmartTextButton, SmartImageButton } from '../../components/admin/SmartButtons';
 
 export const ServiceManager: React.FC = () => {
+    const { uploadImage } = useData();
     const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingService, setEditingService] = useState<Partial<Service> | null>(null);
+    const [uploading, setUploading] = useState(false);
+
+    // File input ref
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         fetchServices();
@@ -23,7 +30,8 @@ export const ServiceManager: React.FC = () => {
                 id: item.id,
                 title: { en: item.title_en, ar: item.title_ar },
                 description: { en: item.description_en, ar: item.description_ar },
-                iconName: item.icon_name
+                iconName: item.icon_name,
+                imageUrl: item.image_url
             }));
             setServices(mappedData);
         } catch (error) {
@@ -42,7 +50,8 @@ export const ServiceManager: React.FC = () => {
                 title_ar: editingService.title?.ar,
                 description_en: editingService.description?.en,
                 description_ar: editingService.description?.ar,
-                icon_name: editingService.iconName
+                icon_name: editingService.iconName,
+                image_url: editingService.imageUrl
             };
 
             if (editingService.id) {
@@ -72,10 +81,41 @@ export const ServiceManager: React.FC = () => {
         }
     };
 
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files?.length || !editingService) return;
+
+        setUploading(true);
+        try {
+            const file = e.target.files[0];
+            const url = await uploadImage(file, 'services');
+            setEditingService(prev => ({ ...prev!, imageUrl: url }));
+        } catch (error) {
+            console.error('Upload failed:', error);
+            alert('Failed to upload image. Make sure "services" storage bucket exists and is public.');
+        } finally {
+            setUploading(false);
+        }
+    };
+
     // Helper to render dynamic icon
     const renderIcon = (iconName: string, size = 20) => {
         const Icon = (LucideIcons as any)[iconName];
         return Icon ? <Icon size={size} /> : <Briefcase size={size} />;
+    };
+
+    // AI Prompts
+    const genDescPrompt = (lang: 'en' | 'ar') => {
+        const title = lang === 'en' ? editingService?.title?.en : editingService?.title?.ar;
+        if (!title) return '';
+        const base = `Write a short, engaging description for a luxury service called "${title}".`;
+        return lang === 'en'
+            ? `${base} Focus on exclusivity and comfort. Max 2 sentences. English.`
+            : `${base} Focus on exclusivity and comfort. Max 2 sentences. Arabic.`;
+    };
+
+    const genImagePrompt = () => {
+        if (!editingService?.title?.en) return '';
+        return `High-end, minimalistic, luxury abstract representation of "${editingService.title.en}", gold and black color palette, premium feel, 4k render.`;
     };
 
     return (
@@ -84,7 +124,7 @@ export const ServiceManager: React.FC = () => {
                 <div className="flex justify-between items-center">
                     <h1 className="text-2xl font-serif text-white">Service Manager</h1>
                     <button
-                        onClick={() => setEditingService({ title: { en: '', ar: '' }, description: { en: '', ar: '' }, iconName: 'Briefcase' })}
+                        onClick={() => setEditingService({ title: { en: '', ar: '' }, description: { en: '', ar: '' }, iconName: 'Briefcase', imageUrl: '' })}
                         className="flex items-center gap-2 bg-gold-500 text-black px-4 py-2 rounded hover:bg-gold-400 transition-colors"
                     >
                         <Plus size={20} /> New Service
@@ -97,9 +137,15 @@ export const ServiceManager: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {services.map(service => (
                             <div key={service.id} className="bg-dark-800 p-6 rounded border border-white/5 flex flex-col gap-4">
-                                <div className="w-12 h-12 bg-gold-500/10 rounded-full flex items-center justify-center text-gold-500">
-                                    {renderIcon(service.iconName, 24)}
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 bg-gold-500/10 rounded-full flex items-center justify-center text-gold-500">
+                                        {renderIcon(service.iconName, 24)}
+                                    </div>
+                                    {service.imageUrl && (
+                                        <img src={service.imageUrl} alt={service.title.en} className="w-12 h-12 object-cover rounded" />
+                                    )}
                                 </div>
+
                                 <div className="flex-grow">
                                     <h3 className="text-xl text-white font-serif mb-2">{service.title.en}</h3>
                                     <p className="text-neutral-400 text-sm line-clamp-3">{service.description.en}</p>
@@ -155,6 +201,42 @@ export const ServiceManager: React.FC = () => {
                                 </div>
                             </div>
 
+                            <div className="border-t border-b border-white/5 py-4 my-2">
+                                <label className="block text-xs uppercase tracking-wider text-neutral-500 mb-2">Service Image</label>
+                                <div className="flex gap-4 items-center">
+                                    {editingService.imageUrl ? (
+                                        <img src={editingService.imageUrl} alt="Preview" className="w-16 h-16 object-cover rounded border border-white/10" />
+                                    ) : (
+                                        <div className="w-16 h-16 bg-white/5 rounded flex items-center justify-center text-neutral-500 text-xs">No Image</div>
+                                    )}
+
+                                    <div className="flex-grow flex flex-col items-start gap-2">
+                                        <SmartImageButton
+                                            prompt={genImagePrompt()}
+                                            bucket="services"
+                                            onImageGenerated={(url) => setEditingService(prev => ({ ...prev!, imageUrl: url }))}
+                                        />
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                onChange={handleImageUpload}
+                                                className="hidden"
+                                                accept="image/*"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => fileInputRef.current?.click()}
+                                                disabled={uploading}
+                                                className="text-xs text-neutral-400 hover:text-white underline"
+                                            >
+                                                or upload manually
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div>
                                 <label className="block text-xs uppercase tracking-wider text-neutral-500 mb-1">Icon Name (Lucide React)</label>
                                 <div className="flex gap-2">
@@ -174,7 +256,13 @@ export const ServiceManager: React.FC = () => {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs uppercase tracking-wider text-neutral-500 mb-1">Description (EN)</label>
+                                    <div className="flex justify-between items-center mb-1">
+                                        <label className="block text-xs uppercase tracking-wider text-neutral-500">Description (EN)</label>
+                                        <SmartTextButton
+                                            prompt={genDescPrompt('en')}
+                                            onGenerate={(text) => setEditingService(prev => ({ ...prev!, description: { ...prev!.description!, en: text } }))}
+                                        />
+                                    </div>
                                     <textarea
                                         value={editingService.description?.en || ''}
                                         onChange={e => setEditingService({ ...editingService, description: { ...editingService.description!, en: e.target.value } })}
@@ -182,7 +270,13 @@ export const ServiceManager: React.FC = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs uppercase tracking-wider text-neutral-500 mb-1">Description (AR)</label>
+                                    <div className="flex justify-between items-center mb-1">
+                                        <label className="block text-xs uppercase tracking-wider text-neutral-500">Description (AR)</label>
+                                        <SmartTextButton
+                                            prompt={genDescPrompt('ar')}
+                                            onGenerate={(text) => setEditingService(prev => ({ ...prev!, description: { ...prev!.description!, ar: text } }))}
+                                        />
+                                    </div>
                                     <textarea
                                         value={editingService.description?.ar || ''}
                                         onChange={e => setEditingService({ ...editingService, description: { ...editingService.description!, ar: e.target.value } })}
