@@ -7,6 +7,7 @@ import { TRANSLATIONS } from '../constants';
 import { useData } from '../context/DataContext';
 import { Button } from '../components/Button';
 import { CarCard } from '../components/CarCard';
+import { SEO } from '../components/SEO';
 
 interface CarDetailProps {
   lang: Language;
@@ -36,27 +37,53 @@ export const CarDetail: React.FC<CarDetailProps> = ({ lang }) => {
   const relatedCars = cars.filter(c => c.category === car.category && c.id !== car.id).slice(0, 2);
 
   // Ensure we have at least 4 images for the display
-  const displayImages = car.gallery && car.gallery.length > 0 
-    ? car.gallery.slice(0, 4) 
+  const displayImages = car.gallery && car.gallery.length > 0
+    ? car.gallery.slice(0, 4)
     : [car.imageUrl, car.imageUrl, car.imageUrl, car.imageUrl];
 
   return (
     <div className="min-h-screen bg-dark-900 pt-24">
+      <SEO
+        title={`Rent ${car.name} (${car.model}) | VELO LUXURY`}
+        description={`Rent the ${car.name} ${car.model} in Kuala Lumpur. ${car.category} class, ${car.engine}, ${car.zeroToSixty}. Book now for ${car.pricePerDay}.`}
+        image={car.imageUrl}
+        type="product"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": `${car.name} ${car.model}`,
+          "image": car.imageUrl,
+          "description": car.description.en,
+          "sku": car.id,
+          "brand": {
+            "@type": "Brand",
+            "name": car.name
+          },
+          "offers": {
+            "@type": "Offer",
+            "url": `https://veloluxury.com/car/${car.id}`,
+            "priceCurrency": "MYR",
+            "price": car.pricePerDay.replace(/[^0-9]/g, ''),
+            "availability": "https://schema.org/InStock",
+            "itemCondition": "https://schema.org/NewCondition"
+          }
+        }}
+      />
       {/* Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link to="/fleet" className="inline-flex items-center text-neutral-400 hover:text-gold-500 transition-colors mb-6 gap-2">
           <ArrowLeft size={16} className="rtl:rotate-180" /> {lang === 'en' ? 'Back to Fleet' : 'العودة للأسطول'}
         </Link>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
+
           {/* Left Column: Images (Gallery) */}
           <div className="lg:col-span-7">
             {/* Main Hero Image */}
             <div className="relative aspect-[16/10] overflow-hidden border border-white/10 group mb-4">
-              <img 
-                src={displayImages[activeImageIndex]} 
-                alt={car.name} 
+              <img
+                src={displayImages[activeImageIndex]}
+                alt={car.name}
                 className="w-full h-full object-cover transition-transform duration-700"
               />
               <div className="absolute top-4 right-4 bg-gold-500 text-black px-4 py-2 font-bold text-sm">
@@ -67,8 +94,8 @@ export const CarDetail: React.FC<CarDetailProps> = ({ lang }) => {
             {/* Gallery Grid - 4 Photos Visible Control */}
             <div className="grid grid-cols-4 gap-2 md:gap-4">
               {displayImages.map((img, idx) => (
-                <button 
-                  key={idx} 
+                <button
+                  key={idx}
                   onClick={() => setActiveImageIndex(idx)}
                   className={`relative aspect-video overflow-hidden border-2 transition-all duration-300 ${activeImageIndex === idx ? 'border-gold-500 opacity-100' : 'border-transparent opacity-60 hover:opacity-100 hover:border-white/30'}`}
                 >
@@ -87,7 +114,7 @@ export const CarDetail: React.FC<CarDetailProps> = ({ lang }) => {
             <div className="sticky top-32">
               <h1 className="text-4xl md:text-5xl font-serif text-white mb-2">{car.name}</h1>
               <p className="text-xl text-neutral-400 mb-6">{car.model}</p>
-              
+
               <div className="flex items-end gap-3 mb-8 border-b border-white/10 pb-8">
                 <span className="text-3xl font-bold text-gold-500">{car.pricePerDay}</span>
                 <span className="text-neutral-500 mb-1">{t.perDay}</span>
@@ -114,7 +141,7 @@ export const CarDetail: React.FC<CarDetailProps> = ({ lang }) => {
                   <p className="text-xs text-neutral-500 uppercase mb-1">Seats</p>
                   <p className="text-white font-mono">{car.seats} Pax</p>
                 </div>
-                 <div className="p-4 bg-dark-800 border border-white/5 flex flex-col items-center text-center group hover:border-gold-500/30 transition-colors">
+                <div className="p-4 bg-dark-800 border border-white/5 flex flex-col items-center text-center group hover:border-gold-500/30 transition-colors">
                   <Calendar className="text-gold-500 mb-2 group-hover:scale-110 transition-transform" size={24} />
                   <p className="text-xs text-neutral-500 uppercase mb-1">Year</p>
                   <p className="text-white font-mono">2023/24</p>

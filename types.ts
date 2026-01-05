@@ -47,7 +47,16 @@ export interface Service {
   id: string;
   title: LocalizedText;
   description: LocalizedText;
-  iconName: 'UserCheck' | 'Heart' | 'Plane';
+  iconName: string;
+}
+
+export interface JournalPost {
+  id: string;
+  title: LocalizedText;
+  content: LocalizedText;
+  imageUrl: string;
+  slug: string;
+  publishedDate: string;
 }
 
 export interface FAQ {

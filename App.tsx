@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { Language } from './types';
 import { DataProvider } from './context/DataContext';
 import { Navbar } from './components/Navbar';
@@ -13,12 +14,21 @@ import { Offers } from './pages/Offers';
 import { Contact } from './pages/Contact';
 import { Policies } from './pages/Policies';
 import { WhatsAppButton } from './components/WhatsAppButton';
+import { WeddingCarRental } from './pages/services/WeddingCarRental';
+import { ChauffeurService } from './pages/services/ChauffeurService';
+import { AirportTransfer } from './pages/services/AirportTransfer';
+import { KLCC } from './pages/locations/KLCC';
+import { BukitBintang } from './pages/locations/BukitBintang';
+import { Journal } from './pages/Journal';
+import { WeddingCarGuide } from './pages/journal/WeddingCarGuide';
 
 // Admin Imports
 import { AdminLogin } from './pages/admin/AdminLogin';
 import { FleetManager } from './pages/admin/FleetManager';
 import { FaqManager } from './pages/admin/FaqManager';
 import { ContactManager } from './pages/admin/ContactManager';
+import { JournalManager } from './pages/admin/JournalManager';
+import { ServiceManager } from './pages/admin/ServiceManager';
 import { DashboardOverview } from './pages/admin/DashboardOverview';
 
 const AppContent: React.FC = () => {
@@ -53,10 +63,25 @@ const AppContent: React.FC = () => {
             <Route path="/contact" element={<Contact lang={lang} />} />
             <Route path="/policies" element={<Policies lang={lang} />} />
 
+            {/* Service SEO Pages */}
+            <Route path="/services/wedding-car-rental-kuala-lumpur" element={<WeddingCarRental lang={lang} />} />
+            <Route path="/services/chauffeur-service-malaysia" element={<ChauffeurService lang={lang} />} />
+            <Route path="/services/airport-transfer-klia" element={<AirportTransfer lang={lang} />} />
+
+            {/* Location SEO Pages */}
+            <Route path="/locations/klcc" element={<KLCC lang={lang} />} />
+            <Route path="/locations/bukit-bintang" element={<BukitBintang lang={lang} />} />
+
+            {/* Journal Routes */}
+            <Route path="/journal" element={<Journal lang={lang} />} />
+            <Route path="/journal/top-5-luxury-wedding-cars-malaysia" element={<WeddingCarGuide lang={lang} />} />
+
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<DashboardOverview />} />
             <Route path="/admin/fleet" element={<FleetManager />} />
+            <Route path="/admin/journal" element={<JournalManager />} />
+            <Route path="/admin/services" element={<ServiceManager />} />
             <Route path="/admin/faqs" element={<FaqManager />} />
             <Route path="/admin/contact" element={<ContactManager />} />
           </Routes>
@@ -78,9 +103,11 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <DataProvider>
-      <AppContent />
-    </DataProvider>
+    <HelmetProvider>
+      <DataProvider>
+        <AppContent />
+      </DataProvider>
+    </HelmetProvider>
   );
 };
 

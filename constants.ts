@@ -19,10 +19,19 @@ export const TRANSLATIONS = {
     nav: {
       home: "Home",
       fleet: "The Fleet",
+      services: "Services",
+      locations: "Locations",
+      journal: "Journal",
       about: "Legacy",
       offers: "Privileges",
       contact: "Contact",
-      policies: "Policies"
+      policies: "Policies",
+      // Sub-menus
+      wedding: "Wedding Cars",
+      chauffeur: "Chauffeur",
+      airport: "Airport Transfer",
+      klcc: "KLCC Area",
+      bukitBintang: "Bukit Bintang"
     },
     hero: {
       title: "Command the Road",
@@ -68,16 +77,27 @@ export const TRANSLATIONS = {
       address: CONTACT_INFO.address.en, // Initial value, will be overridden by context
       copyright: "© 2024 VELO LUXURY. All rights reserved.",
       tagline: "Beyond Transportation."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   ar: {
     nav: {
       home: "الرئيسية",
       fleet: "الأسطول",
+      services: "خدماتنا",
+      locations: "المواقع",
+      journal: "المجلة",
       about: "قصتنا",
       offers: "العروض",
       contact: "اتصل بنا",
-      policies: "السياسات"
+      policies: "السياسات",
+      // Sub-menus
+      wedding: "سيارات الزفاف",
+      chauffeur: "سائق خاص",
+      airport: "نقل المطار",
+      klcc: "منطقة KLCC",
+      bukitBintang: "بوكيت بينتانج"
     },
     hero: {
       title: "تحكم في الطريق",
@@ -123,7 +143,9 @@ export const TRANSLATIONS = {
       address: CONTACT_INFO.address.ar, // Initial value
       copyright: "© 2024 فيلو الفاخرة. جميع الحقوق محفوظة.",
       tagline: "أكثر من مجرد نقل."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   }
 };
 
@@ -214,7 +236,9 @@ export const CARS: Car[] = [
     description: {
       en: "The purest expression of Rolls-Royce. An effortless, immersive experience that whispers success.",
       ar: "أنقى تعبير عن رولز رويس. تجربة غامرة سهلة تهمس بالنجاح."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     id: 'lambo-huracan',
@@ -237,7 +261,9 @@ export const CARS: Car[] = [
     description: {
       en: "Raw emotion. Open-air freedom. The V10 engine sings a song of pure adrenaline on the streets of KL.",
       ar: "عاطفة خام. حرية في الهواء الطلق. محرك V10 يغني أغنية من الأدرينالين النقي في شوارع كوالالمبور."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     id: 's-class',
@@ -260,7 +286,9 @@ export const CARS: Car[] = [
     description: {
       en: "The benchmark of luxury sedans. Advanced technology meets timeless comfort for the discerning executive.",
       ar: "معيار سيارات السيدان الفاخرة. تلتقي التكنولوجيا المتقدمة بالراحة الخالدة للمدير التنفيذي المميز."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     id: 'g-wagon',
@@ -283,7 +311,9 @@ export const CARS: Car[] = [
     description: {
       en: "An icon of capability and status. Dominating presence on the road with the performance to back it up.",
       ar: "أيقونة القدرة والمكانة. حضور مسيطر على الطريق مع أداء يدعمه."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     id: 'porsche-911',
@@ -306,7 +336,9 @@ export const CARS: Car[] = [
     description: {
       en: "The definitive sports car. Precision engineering that connects driver and road in perfect harmony.",
       ar: "السيارة الرياضية النهائية. هندسة دقيقة تربط السائق والطريق في انسجام تام."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     id: 'alphard',
@@ -329,7 +361,9 @@ export const CARS: Car[] = [
     description: {
       en: "First-class travel for groups. Spacious, quiet, and incredibly comfortable for city tours or transfers.",
       ar: "سفر من الدرجة الأولى للمجموعات. واسعة وهادئة ومريحة بشكل لا يصدق لجولات المدينة أو التنقلات."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   }
   ,
   {
@@ -356,7 +390,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "The definition of luxury SUV. Unmatched power combined with exquisite craftsmanship.",
       "ar": "تعريف سيارات الدفع الرباعي الفاخرة. قوة لا تضاهى تقترن بحرفية رائعة."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "1b3a52cf-2d07-4f58-b768-0ae12c5f85f6",
@@ -381,7 +417,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Effortless everywhere. The Rolls-Royce Cullinan is the most capable Rolls-Royce ever created.",
       "ar": "مجهود في كل مكان. رولز رويس كولينان هي أكثر سيارات رولز رويس قدرة على الإطلاق."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "74ac7622-06fd-416e-8302-dff159fb4191",
@@ -406,7 +444,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Exclusive luxury with the appearance of the legendary Maybach.",
       "ar": "فخامة حصرية بمظهر مايباخ الأسطوري."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "28bde5b5-84dc-4791-b1c7-8ca818fce6d3",
@@ -431,7 +471,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Born on the track, built for the road. The roaring V10 is a dying breed of pure performance.",
       "ar": "ولدت على المضمار، وبنيت للطريق. محرك V10 الهادر هو سلالة نادرة من الأداء النقي."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "c3cec0d0-f12d-4967-a085-544ca6407f67",
@@ -456,7 +498,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "The future of the sports car. Stunning design meets sustainable performance.",
       "ar": "مستقبل السيارات الرياضية. تصميم مذهل يلتقي بالأداء المستدام."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "2d7ef863-2630-4f1c-8bce-495efafd0463",
@@ -481,7 +525,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "The ultimate super sedan. Executive comfort creates a disguise for supercar performance.",
       "ar": "السيدان الخارقة النهائية. الراحة التنفيذية تخلق تمويهاً لأداء السيارات الخارقة."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "52eaa390-f882-4b51-b0a0-ef9072494cf5",
@@ -506,7 +552,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "American muscle icon. The rumble of the V8 is unmistakable and addictive.",
       "ar": "أيقونة العضلات الأمريكية. هدير محرك V8 لا لبس فيه ويسبب الإدمان."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "3672d32c-3b41-4acb-bf50-b88a849ab45f",
@@ -531,7 +579,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Open-air freedom with efficiency and style. Perfect for coastal cruising.",
       "ar": "حرية في الهواء الطلق مع الكفاءة والأناقة. مثالية للرحلات الساحلية."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "07faab14-05e5-40cd-8346-2ec7cd236db2",
@@ -556,7 +606,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "The world's first Super SUV. The soul of a super sports car with the functionality of an SUV.",
       "ar": "أول سيارة دفع رباعي فائقة في العالم. روح سيارة رياضية خارقة مع وظائف سيارة دفع رباعي."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "3247f19d-7671-4bf9-9649-5f5befa15f20",
@@ -581,7 +633,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Lighter, stronger, faster. A supercar that redefines expectations.",
       "ar": "أخف، أقوى، أسرع. سيارة خارقة تعيد تعريف التوقعات."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "db4acce1-5cde-4d15-97b4-f5e4b1c79f51",
@@ -606,7 +660,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "A pure sports car. Handcrafted by racers for the road.",
       "ar": "سيارة رياضية نقية. صنعت يدوياً من قبل المتسابقين للطريق."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "a92fc8a5-6a9f-4e41-92d4-edd2b8c62e06",
@@ -631,7 +687,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "The world's most powerful compact performance car. Agility meets brute force.",
       "ar": "أقوى سيارة مدمجة عالية الأداء في العالم. الرشاقة تلتقي بالقوة الغاشمة."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "5010d345-873c-4ee5-9b9a-cb1a4066ef2a",
@@ -656,7 +714,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Godzilla. A technological marvel that challenges supercars costing twice as much.",
       "ar": "غودزيلا. أعجوبة تكنولوجية تتحدى السيارات الخارقة التي تكلف ضعف ثمنها."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "ba102c09-fa68-4c0b-b3e6-3543514a88cf",
@@ -681,7 +741,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Mid-engine perfection. Agile, responsive, and incredibly fun to drive.",
       "ar": "كمال المحرك الأوسط. رشيقة وسريعة الاستجابة وممتعة للغاية في القيادة."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "2bcd4948-26ce-45e8-a60c-61503787c2d3",
@@ -706,7 +768,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Timeless design, contemporary interpretation. The 992 generation sets the standard.",
       "ar": "تصميم خالد، تفسير معاصر. جيل 992 يضع المعايير."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "0c36ca25-dedc-4217-ae6b-1f1ef28bd057",
@@ -731,7 +795,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "The ultimate front-wheel drive performance car. Precise, engaging, and fast.",
       "ar": "سيارة الأداء ذات الدفع الأمامي النهائية. دقيقة، جذابة، وسريعة."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "5029055a-00b6-4120-b11d-edf7bedf7f17",
@@ -756,7 +822,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Luxury, electrified. A spacious sanctuary that combines efficiency with pure class.",
       "ar": "الفخامة، الكهرباء. ملاذ واسع يجمع بين الكفاءة والرقي الخالص."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "4e8fd2d6-b7b5-4262-a598-f582b0740afd",
@@ -781,7 +849,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "The largest BMW ever built. Commanding presence with room for seven in absolute comfort.",
       "ar": "أكبر سيارة بي إم دبليو تم بناؤها على الإطلاق. حضور مسيطر مع مساحة لسبعة أشخاص براحة مطلقة."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "b7e8cd60-e957-446b-9de3-31b6eb207bfd",
@@ -806,7 +876,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "The Maserati of SUVs. Distinctive Italian style with a roar that stirs the soul.",
       "ar": "مازيراتي سيارات الدفع الرباعي. أسلوب إيطالي مميز مع زئير يثير الروح."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "5f5af388-fb04-49b0-8ad5-7a01633a5467",
@@ -831,7 +903,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "A sports car for five. Dynamics that defy physics in an SUV package.",
       "ar": "سيارة رياضية لخمسة أشخاص. ديناميكيات تتحدى الفيزياء في حزمة سيارة دفع رباعي."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "f70de145-f9dc-446f-98c1-b4a8d1063675",
@@ -856,7 +930,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Avant-garde Range Rover. Minimalist design with maximum impact.",
       "ar": "رينج رور الطليعية. تصميم بسيط مع أقصى قدر من التأثير."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "d75d7a20-58ee-4d3f-9be4-2e284cf0492c",
@@ -881,7 +957,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Peerless refinement. The original luxury SUV, elevated to new heights.",
       "ar": "رقي منقطع النظير. سيارة الدفع الرباعي الفاخرة الأصلية، ترتفع إلى آفاق جديدة."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "5904db98-d1ca-43db-a770-86e2a4b8c142",
@@ -906,7 +984,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "The King of the Road. Unstoppable capability with Lexus-like comfort.",
       "ar": "ملك الطريق. قدرة لا يمكن إيقافها مع راحة تشبه سيارات لكزس."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "66271905-cec0-4367-bb14-9872459254e6",
@@ -931,7 +1011,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "The preferred choice for VIP transport. Spacious, smooth, and silent.",
       "ar": "الخيار المفضل لنقل كبار الشخصيات. واسعة وسلسة وصامتة."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "61b55f58-1a32-4f62-b862-7666c4222771",
@@ -956,7 +1038,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Bold and daring. A spacious MPV with a distinctively aggressive road presence.",
       "ar": "جريئة ومقدامة. سيارة متعددة الأغراض واسعة بحضور عدواني مميز على الطريق."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "b2561653-d599-40e9-9845-e958f7f14714",
@@ -981,7 +1065,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "A masterpiece of design. The functionality of a sedan with the lines of a coupe.",
       "ar": "تحفة في التصميم. وظائف سيارة السيدان بخطوط الكوبيه."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "8d70eb87-fa61-4079-a665-b5451cf73477",
@@ -1006,7 +1092,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "The definitive sports sedan. Perfect balance of comfort and driving dynamics.",
       "ar": "السيدان الرياضية النهائية. توازن مثالي بين الراحة وديناميكيات القيادة."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "f3741423-fd1b-49dd-a8f5-e06bc7cc5e4e",
@@ -1031,7 +1119,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Business athlete. Electrified efficiency ensures a quiet, powerful arrival.",
       "ar": "رياضي الأعمال. تضمن الكفاءة الكهربائية وصولاً هادئاً وقوياً."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "59691518-9ae9-4569-bca5-2eb8f6e1383a",
@@ -1056,7 +1146,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Class-leading sophistication. Reliable, spacious, and surprisingly fun to drive.",
       "ar": "رقي رائد في فئته. موثوقة، واسعة، وممتعة في القيادة بشكل مدهش."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "b40abcf7-2b77-4ac8-ae15-a36aae9043bd",
@@ -1081,7 +1173,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Versatile and stylish. The perfect compact SUV for city exploration.",
       "ar": "متعددة الاستخدامات وأنيقة. سيارة الدفع الرباعي المدمجة المثالية لاستكشاف المدينة."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "8e7aeaf1-e881-4978-ad76-15749dfcc544",
@@ -1106,7 +1200,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Baby S-Class. Comfort and tech derived from the flagship sedan.",
       "ar": "إس كلاس الصغيرة. الراحة والتكنولوجيا المستمدة من السيدان الرائدة."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "22e05c8b-6a78-49ed-abc9-b351db8e7dc6",
@@ -1131,7 +1227,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Sporty elegance. More power and aggressive looks for the spirited driver.",
       "ar": "أناقة رياضية. المزيد من القوة والمظهر العدواني للسائق المفعم بالحيوية."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "61da555e-45bc-43e1-9ed1-b471d384ddfd",
@@ -1156,7 +1254,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Style icon. A trendsetter with a design that turns heads everywhere.",
       "ar": "أيقونة الأسلوب. رائدة في الموضة بتصميم يلفت الأنظار في كل مكان."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "fe582098-53de-4773-9f65-6ecc7a86596a",
@@ -1181,7 +1281,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "The best of both worlds. SUV capability with sport coupe aesthetics.",
       "ar": "أفضل ما في العالمين. قدرة سيارات الدفع الرباعي مع جماليات الكوبيه الرياضية."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "8876a86a-5241-47e9-9d20-2ea3c1c228b2",
@@ -1206,7 +1308,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Big personality. A crossover that is fun, practical, and distinctively Mini.",
       "ar": "شخصية كبيرة. كروس أوفر ممتعة وعملية وميني بشكل متميز."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "5c1b4589-7c43-4023-8455-3b3850239bd1",
@@ -1231,7 +1335,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "The definitive executive sedan. Smooth, reliable, and incredibly comfortable.",
       "ar": "السيدان التنفيذية النهائية. سلسة وموثوقة ومريحة بشكل لا يصدق."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   },
   {
     "id": "0646b33e-f6ce-487a-b16a-75c6b3e936fe",
@@ -1256,7 +1362,9 @@ export const CARS: Car[] = [
     "description": {
       "en": "Rugged yet refined. Built to take you anywhere the road leads (or ends).",
       "ar": "وعرة ولكن راقية. بنيت لتأخذك إلى أي مكان يقودك إليه الطريق (أو ينتهي)."
-    }
+    },
+    isVisible: true,
+    isFeatured: false
   }
 ];
 

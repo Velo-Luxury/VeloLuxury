@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { Logo } from './Logo';
-import { LayoutDashboard, Car, HelpCircle, Phone, LogOut, ExternalLink } from 'lucide-react';
+import { LayoutDashboard, Car, HelpCircle, Phone, LogOut, ExternalLink, BookOpen, Briefcase } from 'lucide-react';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -25,6 +25,8 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const menuItems = [
     { path: '/admin/dashboard', icon: LayoutDashboard, label: 'Overview' },
     { path: '/admin/fleet', icon: Car, label: 'Fleet Manager' },
+    { path: '/admin/journal', icon: BookOpen, label: 'Journal Manager' },
+    { path: '/admin/services', icon: Briefcase, label: 'Services Manager' },
     { path: '/admin/faqs', icon: HelpCircle, label: 'FAQ Manager' },
     { path: '/admin/contact', icon: Phone, label: 'Contact Info' },
   ];

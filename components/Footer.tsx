@@ -39,22 +39,36 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
           {/* Navigation */}
           <div>
             <h3 className="text-white font-serif text-lg mb-6">{t.nav.fleet}</h3>
-            <ul className="space-y-3 text-sm text-neutral-400">
+            <ul className="space-y-3 text-sm text-neutral-400 mb-8">
               <li><Link to="/fleet" className="hover:text-gold-500 transition-colors">{t.filters.elegance}</Link></li>
               <li><Link to="/fleet" className="hover:text-gold-500 transition-colors">{t.filters.executive}</Link></li>
               <li><Link to="/fleet" className="hover:text-gold-500 transition-colors">{t.filters.adrenaline}</Link></li>
               <li><Link to="/fleet" className="hover:text-gold-500 transition-colors">{t.filters.majestic}</Link></li>
+            </ul>
+
+            <h3 className="text-white font-serif text-lg mb-6">{t.nav.services}</h3>
+            <ul className="space-y-3 text-sm text-neutral-400">
+              <li><Link to="/services/wedding-car-rental-kuala-lumpur" className="hover:text-gold-500 transition-colors">{t.nav.wedding}</Link></li>
+              <li><Link to="/services/chauffeur-service-malaysia" className="hover:text-gold-500 transition-colors">{t.nav.chauffeur}</Link></li>
+              <li><Link to="/services/airport-transfer-klia" className="hover:text-gold-500 transition-colors">{t.nav.airport}</Link></li>
             </ul>
           </div>
 
           {/* Legal/Links */}
           <div>
             <h3 className="text-white font-serif text-lg mb-6">VELO</h3>
-            <ul className="space-y-3 text-sm text-neutral-400">
+            <ul className="space-y-3 text-sm text-neutral-400 mb-8">
               <li><Link to="/about" className="hover:text-gold-500 transition-colors">{t.nav.about}</Link></li>
+              <li><Link to="/journal" className="hover:text-gold-500 transition-colors">{t.nav.journal}</Link></li>
               <li><Link to="/offers" className="hover:text-gold-500 transition-colors">{t.nav.offers}</Link></li>
               <li><Link to="/policies" className="hover:text-gold-500 transition-colors">{t.nav.policies}</Link></li>
               <li><Link to="/contact" className="hover:text-gold-500 transition-colors">{t.nav.contact}</Link></li>
+            </ul>
+
+            <h3 className="text-white font-serif text-lg mb-6">{t.nav.locations}</h3>
+            <ul className="space-y-3 text-sm text-neutral-400">
+              <li><Link to="/locations/klcc" className="hover:text-gold-500 transition-colors">{t.nav.klcc}</Link></li>
+              <li><Link to="/locations/bukit-bintang" className="hover:text-gold-500 transition-colors">{t.nav.bukitBintang}</Link></li>
             </ul>
           </div>
 

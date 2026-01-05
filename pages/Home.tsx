@@ -7,6 +7,7 @@ import { useData } from '../context/DataContext';
 import { Button } from '../components/Button';
 import { CarCard } from '../components/CarCard';
 import { Star, ArrowRight, ChevronDown, ChevronUp, MessageCircle, Key, Search, HelpCircle, UserCheck, Heart, Plane } from 'lucide-react';
+import { SEO } from '../components/SEO';
 
 interface HomeProps {
   lang: Language;
@@ -17,6 +18,29 @@ export const Home: React.FC<HomeProps> = ({ lang }) => {
   const navigate = useNavigate();
   const { cars, faqs, contactInfo } = useData();
   const [openFaq, setOpenFaq] = useState<string | null>(null);
+  const [dbServices, setDbServices] = useState<any[]>([]);
+
+  // Fetch Services from DB
+  React.useEffect(() => {
+    const fetchServices = async () => {
+      const { supabase } = await import('../lib/supabase');
+      const { data, error } = await supabase.from('services').select('*').order('created_at', { ascending: false });
+
+      if (!error && data && data.length > 0) {
+        const mappedData = data.map(item => ({
+          id: item.id,
+          title: { en: item.title_en, ar: item.title_ar },
+          description: { en: item.description_en, ar: item.description_ar },
+          iconName: item.icon_name
+        }));
+        setDbServices(mappedData);
+      }
+    };
+    fetchServices();
+  }, []);
+
+  // Use DB services if available, otherwise fallback to constants
+  const displayServices = dbServices.length > 0 ? dbServices : SERVICES;
 
   // Get a curated list for the homepage (Featured cars only)
   // If no cars are featured, fallback to first 3 visible cars
@@ -38,6 +62,31 @@ export const Home: React.FC<HomeProps> = ({ lang }) => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title="VELO LUXURY | Premium Car Rental & Chauffeur Services Kuala Lumpur"
+        description="The finest luxury car rental experience in Malaysia. Rent Ferrari, Lamborghini, Rolls Royce, Porsche and premium executive sedans in Kuala Lumpur."
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "CarRental",
+          "name": "VELO LUXURY",
+          "image": "https://veloluxury.com/hero.jpg",
+          "url": "https://veloluxury.com",
+          "telephone": contactInfo.phone,
+          "priceRange": "$$$$",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Kuala Lumpur City Centre",
+            "addressLocality": "Kuala Lumpur",
+            "addressCountry": "MY"
+          },
+          "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+            "opens": "09:00",
+            "closes": "23:00"
+          }
+        }}
+      />
       {/* HERO SECTION */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -177,8 +226,8 @@ export const Home: React.FC<HomeProps> = ({ lang }) => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-16">
-            {SERVICES.map((service) => {
-              const Icon = iconMap[service.iconName];
+            {displayServices.map((service) => {
+              const Icon = iconMap[service.iconName] || Search; // Fallback icon
               return (
                 <div key={service.id} className="text-center group p-8 rounded-2xl hover:bg-white/5 transition-colors duration-300 cursor-default">
                   <div className="w-16 h-16 mx-auto bg-gold-500/10 rounded-full flex items-center justify-center border border-gold-500/20 mb-6 group-hover:scale-110 transition-all duration-500">
@@ -264,6 +313,71 @@ export const Home: React.FC<HomeProps> = ({ lang }) => {
             >
               Contact Support <ArrowRight size={14} className="ml-2 rtl:rotate-180" />
             </a>
+          </div>
+        </div>
+      </section>
+
+      {/* SEO CONTENT BLOCK (Visible Text for Ranking) */}
+      <section className="py-24 bg-black border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+
+            {/* Column 1 */}
+            <div className="prose prose-invert prose-gold">
+              <h2 className="text-3xl font-serif text-white mb-6">
+                {lang === 'en' ? 'Premier Luxury Car Rental Services in Kuala Lumpur' : 'خدمات تأجير السيارات الفاخرة المميزة في كوالالمبور'}
+              </h2>
+              <p className="text-neutral-400 leading-relaxed mb-6">
+                {lang === 'en'
+                  ? "At VELO LUXURY, we redefine mobility for the elite. As Kuala Lumpur's leading luxury car rental service, we provide an unchecked passport to the city's most exclusive experiences. Whether you require a chauffeur-driven Rolls-Royce for a high-stakes business summit at KLCC or a self-drive Lamborghini for a weekend escapade to Genting Highlands, our fleet is curated to exact high standards."
+                  : "في فيلو الفاخرة، نعيد تعريف التنقل للنخبة. بصفتنا خدمة تأجير السيارات الفاخرة الرائدة في كوالالمبور، نقدم جواز سفر غير مقيد لأكثر التجارب حصرية في المدينة. سواء كنت بحاجة إلى سيارة رولز رويس بسائق لحضور قمة عمل مهمة في مركز كوالالمبور للمؤتمرات أو سيارة لامبورغيني للقيادة الذاتية لقضاء عطلة نهاية الأسبوع في مرتفعات جنتنج، فإن أسطولنا مصمم وفقاً لمعايير عالية دقيقة."}
+              </p>
+              <h3 className="text-xl font-serif text-white mb-4">
+                {lang === 'en' ? 'Why Choose VELO for Your Malaysia Journey?' : 'لماذا تختار فيلو لرحلتك في ماليزيا؟'}
+              </h3>
+              <ul className="list-disc pl-5 space-y-2 text-neutral-400">
+                <li>
+                  <strong className="text-gold-500">{lang === 'en' ? 'Unmatched Fleet:' : 'أسطول لا مثيل له:'}</strong> {lang === 'en' ? 'From the Ferrari 488 to the Mercedes-Maybach S-Class, we own and manage Malaysia\'s most desirable garage.' : 'من فيراري 488 إلى مرسيدس-مايباخ إس-كلاس، نحن نمتلك وندير أكثر مرآب مرغوب في ماليزيا.'}
+                </li>
+                <li>
+                  <strong className="text-gold-500">{lang === 'en' ? 'Doorstep Delivery:' : 'توصيل حتى الباب:'}</strong> {lang === 'en' ? 'We deliver your supercar directly to your hotel, private residence, or Kuala Lumpur International Airport (KLIA).' : 'نقوم بتوصيل سيارتك الخارقة مباشرة إلى فندقك، مسكنك الخاص، أو مطار كوالالمبور الدولي (KLIA).'}
+                </li>
+                <li>
+                  <strong className="text-gold-500">{lang === 'en' ? 'Privacy & Discretion:' : 'الخصوصية والتقدير:'}</strong> {lang === 'en' ? 'Trusted by diplomats, celebrities, and business leaders for our rigorous confidentiality protocols.' : 'موثوق بنا من قبل الدبلوماسيين، المشاهير، وقادة الأعمال لبروتوكولات السرية الصارمة لدينا.'}
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 2 */}
+            <div className="prose prose-invert prose-gold">
+              <h2 className="text-3xl font-serif text-white mb-6">
+                {lang === 'en' ? 'Wedding Car Rental & Special Events' : 'تأجير سيارات الزفاف والمناسبات الخاصة'}
+              </h2>
+              <p className="text-neutral-400 leading-relaxed mb-6">
+                {lang === 'en'
+                  ? "Make an entrance that creates an eternal memory. Our wedding car rental service in Malaysia offers a selection of majestic vehicles including the Rolls-Royce Ghost and Bentley Flying Spur. We ensure your special day is flawless with white-glove service, immaculately detailed vehicles, and professional chauffeurs who understand the nuance of ceremonial timing."
+                  : "اصنع دخولاً يخلق ذكرى أبدية. خدمة تأجير سيارات الزفاف في ماليزيا تقدم مجموعة من السيارات المهيبة بما في ذلك رولز رويس جوست وبنتلي فلاينج سبير. نضمن أن يكون يومك الخاص لا تشوبه شائبة مع خدمة القفازات البيضاء، مركبات مفصلة بدقة، وسائقين محترفين يفهمون الفروق الدقيقة في توقيت الاحتفال."}
+              </p>
+
+              <h3 className="text-xl font-serif text-white mb-4">
+                {lang === 'en' ? 'Explore Our Categories' : 'استكشف فئاتنا'}
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Link to="/fleet" className="text-gold-500 hover:text-white transition-colors flex items-center gap-2 text-sm">
+                  <ArrowRight size={14} className="rtl:rotate-180" /> {lang === 'en' ? 'Sports Car Rental' : 'تأجير السيارات الرياضية'}
+                </Link>
+                <Link to="/fleet" className="text-gold-500 hover:text-white transition-colors flex items-center gap-2 text-sm">
+                  <ArrowRight size={14} className="rtl:rotate-180" /> {lang === 'en' ? 'Luxury SUV Hire' : 'تأجير سيارات الدفع الرباعي الفاخرة'}
+                </Link>
+                <Link to="/fleet" className="text-gold-500 hover:text-white transition-colors flex items-center gap-2 text-sm">
+                  <ArrowRight size={14} className="rtl:rotate-180" /> {lang === 'en' ? 'Chauffeur Services' : 'خدمات السائق'}
+                </Link>
+                <Link to="/fleet" className="text-gold-500 hover:text-white transition-colors flex items-center gap-2 text-sm">
+                  <ArrowRight size={14} className="rtl:rotate-180" /> {lang === 'en' ? 'Wedding Cars' : 'سيارات الزفاف'}
+                </Link>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>

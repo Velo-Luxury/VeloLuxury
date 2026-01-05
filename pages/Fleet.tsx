@@ -4,6 +4,7 @@ import { CarCategory, Language } from '../types';
 import { TRANSLATIONS } from '../constants';
 import { useData } from '../context/DataContext';
 import { CarCard } from '../components/CarCard';
+import { SEO } from '../components/SEO';
 
 interface FleetProps {
   lang: Language;
@@ -28,6 +29,11 @@ export const Fleet: React.FC<FleetProps> = ({ lang }) => {
 
   return (
     <div className="min-h-screen bg-dark-900 pt-24">
+      <SEO
+        title="Our Layout | VELO LUXURY Fleet"
+        description="Explore our exclusive fleet of luxury vehicles including Sports, Executive, and SUV categories available for rent in Kuala Lumpur."
+        image="/velo-logo.jpg"
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
         {/* Header */}
@@ -49,8 +55,8 @@ export const Fleet: React.FC<FleetProps> = ({ lang }) => {
               key={cat}
               onClick={() => setActiveCategory(cat as any)}
               className={`px-6 py-2 text-sm uppercase tracking-wider border transition-all duration-300 ${activeCategory === cat
-                  ? 'border-gold-500 text-black bg-gold-500 shadow-[0_0_15px_rgba(192,160,98,0.2)]'
-                  : 'border-white/20 text-neutral-400 hover:border-gold-500 hover:text-gold-500'
+                ? 'border-gold-500 text-black bg-gold-500 shadow-[0_0_15px_rgba(192,160,98,0.2)]'
+                : 'border-white/20 text-neutral-400 hover:border-gold-500 hover:text-gold-500'
                 }`}
             >
               {cat === 'All' ? t.filters.all : t.filters[cat.toLowerCase() as keyof typeof t.filters]}
