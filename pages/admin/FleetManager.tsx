@@ -517,13 +517,24 @@ export const FleetManager: React.FC = () => {
                       className="bg-dark-800 border border-white/10 rounded px-2 py-1 text-xs text-white w-32 focus:border-gold-500 outline-none appearance-none cursor-pointer"
                     >
                       <option value="Onyx Black">Onyx Black</option>
+                      <option value="Matte Black">Matte Black</option>
                       <option value="Crystal White">Crystal White</option>
+                      <option value="Pearl White">Pearl White</option>
                       <option value="Silver Metallic">Silver Metallic</option>
-                      <option value="Midnight Blue">Midnight Blue</option>
-                      <option value="Emerald Green">Emerald Green</option>
+                      <option value="Titanium Silver">Titanium Silver</option>
                       <option value="Gunmetal Grey">Gunmetal Grey</option>
+                      <option value="Nardo Grey">Nardo Grey</option>
+                      <option value="Midnight Blue">Midnight Blue</option>
+                      <option value="Sapphire Blue">Sapphire Blue</option>
+                      <option value="Emerald Green">Emerald Green</option>
+                      <option value="British Racing Green">British Racing Green</option>
                       <option value="Burgundy Red">Burgundy Red</option>
+                      <option value="Sunset Orange">Sunset Orange</option>
+                      <option value="Racing Yellow">Racing Yellow</option>
+                      <option value="Midnight Purple">Midnight Purple</option>
                       <option value="Gold">Gold</option>
+                      <option value="Rose Gold">Rose Gold</option>
+                      <option value="Bronze">Bronze</option>
                     </select>
                   </div>
 

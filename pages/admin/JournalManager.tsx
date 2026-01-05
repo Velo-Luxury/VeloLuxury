@@ -13,6 +13,11 @@ export const JournalManager: React.FC = () => {
     const [editingPost, setEditingPost] = useState<Partial<JournalPost> | null>(null);
     const [uploading, setUploading] = useState(false);
 
+    // Topic Suggestion State
+    const [suggestedTopics, setSuggestedTopics] = useState<{ en: string; ar: string }[]>([]);
+    const [showTopicModal, setShowTopicModal] = useState(false);
+    const [suggestingTopics, setSuggestingTopics] = useState(false);
+
     // File input ref
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -99,18 +104,45 @@ export const JournalManager: React.FC = () => {
     };
 
     // AI Prompts
+    // AI Prompts & Logic
+    const generateJournalTopics = async () => {
+        setSuggestingTopics(true);
+        setShowTopicModal(true);
+        try {
+            const prompt = `Generate 5 engaging, high-end luxury lifestyle blog post titles for a luxury car rental service (Velo Luxury) in Malaysia. 
+            Focus on topics like: Hidden Gems, Luxury Travel, Supercar Experiences, Chauffeur Services, Wedding Cars.
+            Optimize for SEO and "Generative Engine Optimization" (GEO).
+            Return a valid JSON array of objects, where each object has "en" (English Title) and "ar" (Arabic Title).
+            Example: [{"en": "Top 5 Luxury Drives", "ar": "أفضل 5 جولات فاخرة"}]`;
+
+            // Dynamic import to avoid SSR issues if any
+            const { generateContent } = await import('../../lib/gemini');
+            const response = await generateContent(prompt);
+
+            const cleanText = response.replace(/```json|```/g, '').trim();
+            const topics = JSON.parse(cleanText);
+            setSuggestedTopics(topics);
+        } catch (error) {
+            console.error("Failed to generate topics:", error);
+            alert("Failed to generate topics. Please try again.");
+            setShowTopicModal(false);
+        } finally {
+            setSuggestingTopics(false);
+        }
+    };
+
     const genContentPrompt = (lang: 'en' | 'ar') => {
         const title = lang === 'en' ? editingPost?.title?.en : editingPost?.title?.ar;
         if (!title) return '';
-        const base = `Write a comprehensive, engaging luxury lifestyle blog post geared towards high-net-worth individuals about "${title}".`;
+        const base = `Write a comprehensive, SEO-optimized luxury lifestyle blog post about "${title}". Include relevant keywords for luxury car rental in Malaysia, Kuala Lumpur, and chauffeur services. Optimize for AI Search (GEO) by answering common user questions directly.`;
         return lang === 'en'
-            ? `${base} Use Markdown formatting (headings, lists). Tone: Sophisticated, exclusive. English.`
-            : `${base} Use Markdown formatting. Tone: Sophisticated, exclusive. Arabic.`;
+            ? `${base} Use Markdown formatting (h2, h3, lists). Tone: Sophisticated, exclusive, inviting. English.`
+            : `${base} Use Markdown formatting. Tone: Sophisticated, exclusive, inviting. Arabic.`;
     };
 
     const genImagePrompt = () => {
         if (!editingPost?.title?.en) return '';
-        return `Editorial magazine style illustration for a luxury article about "${editingPost.title.en}", high fashion, elegant, cinematic lighting, 8k.`;
+        return `Editorial magazine style illustration for a luxury article about "${editingPost.title.en}", high fashion, elegant, cinematic lighting, 8k, photorealistic, luxury car lifestyle context.`;
     };
 
 
@@ -170,7 +202,17 @@ export const JournalManager: React.FC = () => {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs uppercase tracking-wider text-neutral-500 mb-1">Title (EN)</label>
+                                    <div className="flex justify-between items-center mb-1">
+                                        <label className="block text-xs uppercase tracking-wider text-neutral-500">Title (EN)</label>
+                                        <button
+                                            type="button"
+                                            onClick={generateJournalTopics}
+                                            className="text-[10px] text-gold-500 hover:text-white flex items-center gap-1"
+                                        >
+                                            <Loader2 size={10} className={suggestingTopics ? "animate-spin" : "hidden"} />
+                                            Suggest Topics
+                                        </button>
+                                    </div>
                                     <input
                                         type="text"
                                         value={editingPost.title?.en || ''}
@@ -270,6 +312,46 @@ export const JournalManager: React.FC = () => {
                                 </button>
                             </div>
 
+                        </div>
+                    </div>
+                )}
+
+                {/* Topic Suggestion Modal */}
+                {showTopicModal && (
+                    <div className="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center p-4">
+                        <div className="bg-dark-900 border border-gold-500/30 rounded-lg p-6 w-full max-w-md">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-xl text-gold-500 font-serif">AI Topic Suggestions</h3>
+                                <button onClick={() => setShowTopicModal(false)} className="text-neutral-500 hover:text-white"><X size={20} /></button>
+                            </div>
+
+                            {suggestingTopics ? (
+                                <div className="flex flex-col items-center justify-center py-8 text-neutral-400">
+                                    <Loader2 className="animate-spin mb-2" size={32} />
+                                    <p>Analyzing SEO Trends & Brainstorming...</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-2">
+                                    {suggestedTopics.map((topic, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => {
+                                                setEditingPost(prev => ({
+                                                    ...prev!,
+                                                    title: { en: topic.en, ar: topic.ar },
+                                                    // Auto-generate a slug from English title
+                                                    slug: topic.en.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+                                                }));
+                                                setShowTopicModal(false);
+                                            }}
+                                            className="w-full text-left p-3 rounded bg-white/5 hover:bg-gold-500/10 border border-white/5 hover:border-gold-500/50 transition-colors group"
+                                        >
+                                            <div className="text-white font-medium group-hover:text-gold-400">{topic.en}</div>
+                                            <div className="text-neutral-500 text-xs text-right mt-1" dir="rtl">{topic.ar}</div>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
