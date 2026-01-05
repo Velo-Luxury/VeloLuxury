@@ -16,9 +16,14 @@ interface HomeProps {
 export const Home: React.FC<HomeProps> = ({ lang }) => {
   const t = TRANSLATIONS[lang];
   const navigate = useNavigate();
-  const { cars, faqs, contactInfo } = useData();
+  const { cars, faqs, contactInfo, heroContent } = useData();
   const [openFaq, setOpenFaq] = useState<string | null>(null);
   const [dbServices, setDbServices] = useState<any[]>([]);
+
+  // Hero Content Data (Dynamic or Static Fallback)
+  const heroImage = heroContent?.imageUrl || '/hero.jpg';
+  const heroTitle = heroContent?.title[lang] || t.hero.title;
+  const heroSubtitle = heroContent?.subtitle[lang] || t.hero.subtitle;
 
   // Fetch Services from DB
   React.useEffect(() => {
@@ -69,7 +74,7 @@ export const Home: React.FC<HomeProps> = ({ lang }) => {
           "@context": "https://schema.org",
           "@type": "CarRental",
           "name": "VELO LUXURY",
-          "image": "https://veloluxury.com/hero.jpg",
+          "image": heroImage,
           "url": "https://veloluxury.com",
           "telephone": contactInfo.phone,
           "priceRange": "$$$$",
@@ -92,7 +97,7 @@ export const Home: React.FC<HomeProps> = ({ lang }) => {
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/20 to-dark-900 z-10"></div>
           <img
-            src="/hero.jpg"
+            src={heroImage}
             alt="Luxury Car"
             className="w-full h-full object-cover transform scale-105 animate-[zoomIn_20s_infinite_alternate]"
           />
@@ -108,10 +113,10 @@ export const Home: React.FC<HomeProps> = ({ lang }) => {
           </div>
 
           <h1 className="text-5xl md:text-7xl lg:text-9xl font-serif font-bold text-white mb-6 leading-none drop-shadow-2xl">
-            {t.hero.title}
+            {heroTitle}
           </h1>
           <p className="text-neutral-200 text-lg md:text-2xl max-w-2xl mx-auto mb-10 font-light drop-shadow-md leading-relaxed">
-            {t.hero.subtitle}
+            {heroSubtitle}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -172,6 +177,16 @@ export const Home: React.FC<HomeProps> = ({ lang }) => {
                 <CarCard car={car} lang={lang} />
               </div>
             ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <Button
+              onClick={() => navigate('/fleet')}
+              className="min-w-[200px] border-gold-500 text-gold-500 hover:bg-gold-500 hover:text-black transition-all duration-300 transform hover:scale-105"
+              variant="outline"
+            >
+              {t.home.exploreAll}
+            </Button>
           </div>
         </div>
       </section>

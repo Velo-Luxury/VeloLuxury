@@ -30,6 +30,7 @@ import { FaqManager } from './pages/admin/FaqManager';
 import { ContactManager } from './pages/admin/ContactManager';
 import { JournalManager } from './pages/admin/JournalManager';
 import { ServiceManager } from './pages/admin/ServiceManager';
+import { HeroManager } from './pages/admin/HeroManager';
 import { DashboardOverview } from './pages/admin/DashboardOverview';
 
 const AppContent: React.FC = () => {
@@ -80,6 +81,7 @@ const AppContent: React.FC = () => {
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<DashboardOverview />} />
+            <Route path="/admin/hero" element={<HeroManager />} />
             <Route path="/admin/fleet" element={<FleetManager />} />
             <Route path="/admin/journal" element={<JournalManager />} />
             <Route path="/admin/services" element={<ServiceManager />} />

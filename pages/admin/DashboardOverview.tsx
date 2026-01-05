@@ -49,6 +49,17 @@ export const DashboardOverview: React.FC = () => {
                 <div className="lg:col-span-2 space-y-6">
                     <h2 className="text-xl text-white font-serif">Quick Actions</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Link to="/admin/hero" className="bg-dark-800 p-6 rounded-xl border border-white/5 hover:border-gold-500/50 transition-colors group flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                                    <Star size={20} />
+                                </div>
+                                <div>
+                                    <h3 className="text-white font-bold">Hero Section</h3>
+                                    <p className="text-sm text-neutral-400">Update homepage banner</p>
+                                </div>
+                            </div>
+                        </Link>
                         <Link to="/admin/fleet" className="bg-dark-800 p-6 rounded-xl border border-white/5 hover:border-gold-500/50 transition-colors group flex items-center justify-between">
                             <div className="flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-colors">

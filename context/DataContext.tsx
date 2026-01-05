@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Car, FAQ, ContactInfo } from '../types';
+import { Car, FAQ, ContactInfo, HeroContent } from '../types';
 import { CARS, FAQS, CONTACT_INFO } from '../constants';
 import { supabase } from '../lib/supabase';
 
@@ -19,6 +19,9 @@ interface DataContextType {
   contactInfo: ContactInfo;
   updateContactInfo: (info: ContactInfo) => Promise<void>;
 
+  heroContent: HeroContent | null;
+  updateHeroContent: (content: HeroContent) => Promise<void>;
+
   isAdmin: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
@@ -31,6 +34,7 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [cars, setCars] = useState<Car[]>([]);
   const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [heroContent, setHeroContent] = useState<HeroContent | null>(null);
   const [contactInfo, setContactInfo] = useState<ContactInfo>(CONTACT_INFO);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -89,6 +93,35 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       } else {
         // If no contact info exists in DB, create the initial row
         await supabase.from('contact_info').insert([{ id: 1, ...CONTACT_INFO }]);
+      }
+
+      // Fetch Hero Content (Singleton ID 1)
+      const { data: heroData } = await supabase.from('hero_content').select('*').single();
+      if (heroData) {
+        setHeroContent({
+          id: heroData.id,
+          title: { en: heroData.title_en, ar: heroData.title_ar },
+          subtitle: { en: heroData.subtitle_en, ar: heroData.subtitle_ar },
+          imageUrl: heroData.image_url
+        });
+      } else {
+        // Create default if missing
+        const defaultHero = {
+          title_en: 'Command the Road',
+          title_ar: 'تحكم في الطريق',
+          subtitle_en: 'Kuala Lumpur’s most exclusive fleet. Delivered to your doorstep. Booked in seconds.',
+          subtitle_ar: 'الأسطول الأكثر تميزاً في كوالالمبور. توصيل حتى باب منزلك. حجز في ثوانٍ.',
+          image_url: '/hero.jpg'
+        };
+        const { data: newHero } = await supabase.from('hero_content').insert([defaultHero]).select().single();
+        if (newHero) {
+          setHeroContent({
+            id: newHero.id,
+            title: { en: newHero.title_en, ar: newHero.title_ar },
+            subtitle: { en: newHero.subtitle_en, ar: newHero.subtitle_ar },
+            imageUrl: newHero.image_url
+          });
+        }
       }
 
     } catch (error) {
@@ -231,6 +264,21 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setContactInfo(info);
   };
 
+  // --- HERO CONTENT ACTIONS ---
+  const updateHeroContent = async (content: HeroContent) => {
+    const dbUpdate = {
+      title_en: content.title.en,
+      title_ar: content.title.ar,
+      subtitle_en: content.subtitle.en,
+      subtitle_ar: content.subtitle.ar,
+      image_url: content.imageUrl
+    };
+
+    const { error } = await supabase.from('hero_content').update(dbUpdate).eq('id', content.id);
+    if (error) throw error;
+    setHeroContent(content);
+  };
+
   // --- AUTH ACTIONS ---
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     console.log(`[Debug] Attempting login for email: '${email}'`); // Debug log
@@ -256,6 +304,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       cars, loading, addCar, updateCar, deleteCar,
       faqs, addFaq, updateFaq, deleteFaq,
       contactInfo, updateContactInfo,
+      heroContent, updateHeroContent,
       isAdmin, login, logout,
       uploadImage
     }}>

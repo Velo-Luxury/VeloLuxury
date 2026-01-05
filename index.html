@@ -1,107 +1,43 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VELO LUXURY | Premium Car Rental Kuala Lumpur</title>
-    <meta name="description" content="Experience the finest luxury car rentals in Kuala Lumpur. From sports cars (Ferrari, Porsche) to executive sedans (Mercedes, BMW), Velo Luxury provides premium vehicles for business and leisure." />
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://veloluxury.com/" />
-    <meta property="og:title" content="VELO LUXURY | Premium Car Rental Kuala Lumpur" />
-    <meta property="og:description" content="Experience the finest luxury car rentals in Kuala Lumpur. From sports cars to executive sedans, Velo Luxury provides premium vehicles for business and leisure." />
-    <meta property="og:image" content="https://veloluxury.com/logo.png" />
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://veloluxury.com/" />
-    <meta property="twitter:title" content="VELO LUXURY | Premium Car Rental Kuala Lumpur" />
-    <meta property="twitter:description" content="Experience the finest luxury car rentals in Kuala Lumpur. From sports cars to executive sedans, Velo Luxury provides premium vehicles for business and leisure." />
-    <meta property="twitter:image" content="https://veloluxury.com/logo.png" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              gold: {
-                400: '#CDB47D',
-                500: '#B49B62', // Matching the logo's muted gold
-                600: '#96804C',
-              },
-              slate: {
-                700: '#3E5466',
-                800: '#2F4050', // Matching the logo's deep slate
-                900: '#1E2A35',
-              },
-              dark: {
-                900: '#050505',
-                800: '#0F151A', // Slightly blue-tinted dark for harmony
-                700: '#1A222A'
-              }
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              serif: ['Playfair Display', 'serif'],
-            },
-            animation: {
-              'fade-in': 'fadeIn 0.8s ease-out forwards',
-              'slide-up': 'slideUp 0.8s ease-out forwards',
-              'zoom-in': 'zoomIn 20s infinite alternate',
-            },
-            keyframes: {
-              fadeIn: {
-                '0%': { opacity: '0' },
-                '100%': { opacity: '1' },
-              },
-              slideUp: {
-                '0%': { opacity: '0', transform: 'translateY(20px)' },
-                '100%': { opacity: '1', transform: 'translateY(0)' },
-              },
-              zoomIn: {
-                '0%': { transform: 'scale(1)' },
-                '100%': { transform: 'scale(1.1)' },
-              }
-            }
-          },
-        },
-      }
-    </script>
-    <style>
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #0B0B0B;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #2F4050;
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #B49B62;
-      }
-    </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.6",
-    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.39.3"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VELO LUXURY | Premium Car Rental Kuala Lumpur</title>
+  <meta name="description"
+    content="Experience the finest luxury car rentals in Kuala Lumpur. From sports cars (Ferrari, Porsche) to executive sedans (Mercedes, BMW), Velo Luxury provides premium vehicles for business and leisure." />
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://veloluxury.com/" />
+  <meta property="og:title" content="VELO LUXURY | Premium Car Rental Kuala Lumpur" />
+  <meta property="og:description"
+    content="Experience the finest luxury car rentals in Kuala Lumpur. From sports cars to executive sedans, Velo Luxury provides premium vehicles for business and leisure." />
+  <meta property="og:image" content="https://veloluxury.com/logo.png" />
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://veloluxury.com/" />
+  <meta property="twitter:title" content="VELO LUXURY | Premium Car Rental Kuala Lumpur" />
+  <meta property="twitter:description"
+    content="Experience the finest luxury car rentals in Kuala Lumpur. From sports cars to executive sedans, Velo Luxury provides premium vehicles for business and leisure." />
+  <meta property="twitter:image" content="https://veloluxury.com/logo.png" />
+  <meta property="twitter:image" content="https://veloluxury.com/logo.png" />
+  <!-- Redirect /admin to /#/admin -->
+  <script>
+    if (window.location.pathname === '/admin' || window.location.pathname === '/admin/') {
+      window.location.href = '/#/admin';
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet">
 </head>
-  <body class="bg-dark-900 text-white antialiased overflow-x-hidden selection:bg-gold-500 selection:text-black">
-    <div id="root"></div>
+
+<body class="bg-dark-900 text-white antialiased overflow-x-hidden selection:bg-gold-500 selection:text-black">
+  <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>
+
 </html>

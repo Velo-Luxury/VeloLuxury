@@ -43,6 +43,7 @@ export const TRANSLATIONS = {
       featuredTitle: "Curated Excellence",
       servicesTitle: "Beyond the Drive",
       viewFleet: "Explore Full Fleet",
+      exploreAll: "Explore All Cars",
       howItWorksTitle: "Seamless Acquisition",
       faqTitle: "Frequently Asked Questions"
     },
@@ -109,6 +110,7 @@ export const TRANSLATIONS = {
       featuredTitle: "تميز مختار",
       servicesTitle: "أكثر من مجرد قيادة",
       viewFleet: "استكشف الأسطول الكامل",
+      exploreAll: "استكشف كل السيارات",
       howItWorksTitle: "امتلاك سلس",
       faqTitle: "أسئلة مكررة"
     },

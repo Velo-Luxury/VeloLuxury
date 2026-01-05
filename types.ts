@@ -72,3 +72,10 @@ export interface ContactInfo {
   address: LocalizedText;
   mapUrl: string;
 }
+
+export interface HeroContent {
+  id: number;
+  title: LocalizedText;
+  subtitle: LocalizedText;
+  imageUrl: string;
+}
