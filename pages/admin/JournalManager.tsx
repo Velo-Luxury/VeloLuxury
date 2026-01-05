@@ -135,9 +135,11 @@ export const JournalManager: React.FC = () => {
         const title = lang === 'en' ? editingPost?.title?.en : editingPost?.title?.ar;
         if (!title) return '';
         const base = `Write a comprehensive, SEO-optimized luxury lifestyle blog post about "${title}". Include relevant keywords for luxury car rental in Malaysia, Kuala Lumpur, and chauffeur services. Optimize for AI Search (GEO) by answering common user questions directly.`;
+        const noImages = "Do NOT include any placeholder images, image links, or instructions to insert images. Text only.";
+
         return lang === 'en'
-            ? `${base} Use Markdown formatting (h2, h3, lists). Tone: Sophisticated, exclusive, inviting. English.`
-            : `${base} Use Markdown formatting. Tone: Sophisticated, exclusive, inviting. Arabic.`;
+            ? `${base} ${noImages} Use Markdown formatting (h2, h3, lists). Tone: Sophisticated, exclusive, inviting. English.`
+            : `${base} ${noImages} Use Markdown formatting. Tone: Sophisticated, exclusive, inviting. Arabic ONLY. Do not include English subtitles or translations.`;
     };
 
     const genImagePrompt = () => {
@@ -145,6 +147,20 @@ export const JournalManager: React.FC = () => {
         return `Editorial magazine style illustration for a luxury article about "${editingPost.title.en}", high fashion, elegant, cinematic lighting, 8k, photorealistic, luxury car lifestyle context.`;
     };
 
+
+    const handleContentGenerated = (text: string, lang: 'en' | 'ar') => {
+        // Remove markdown code blocks and common AI prefixes
+        let clean = text.replace(/```markdown|```/g, '').trim();
+        clean = clean.replace(/^(Okay|Sure|Here is|Certainly).*?(\n|$)/i, '').trim();
+
+        setEditingPost(prev => ({
+            ...prev!,
+            content: {
+                ...prev!.content!,
+                [lang]: clean
+            }
+        }));
+    };
 
     return (
         <AdminLayout>
@@ -280,7 +296,7 @@ export const JournalManager: React.FC = () => {
                                     <label className="block text-xs uppercase tracking-wider text-neutral-500">Content (EN) - Use Markdown</label>
                                     <SmartTextButton
                                         prompt={genContentPrompt('en')}
-                                        onGenerate={(text) => setEditingPost(prev => ({ ...prev!, content: { ...prev!.content!, en: text } }))}
+                                        onGenerate={(text) => handleContentGenerated(text, 'en')}
                                     />
                                 </div>
                                 <textarea
@@ -294,7 +310,7 @@ export const JournalManager: React.FC = () => {
                                     <label className="block text-xs uppercase tracking-wider text-neutral-500">Content (AR) - Use Markdown</label>
                                     <SmartTextButton
                                         prompt={genContentPrompt('ar')}
-                                        onGenerate={(text) => setEditingPost(prev => ({ ...prev!, content: { ...prev!.content!, ar: text } }))}
+                                        onGenerate={(text) => handleContentGenerated(text, 'ar')}
                                     />
                                 </div>
                                 <textarea

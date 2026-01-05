@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Language } from '../types';
+import { CONTACT_INFO } from '../constants';
 import { SEO } from '../components/SEO';
 import { supabase } from '../lib/supabase';
 import { Calendar, User, ArrowLeft, Loader2 } from 'lucide-react';
@@ -108,7 +109,41 @@ export const JournalPost: React.FC<Props> = ({ lang }) => {
                         {content}
                     </ReactMarkdown>
                 </div>
-            </article>
-        </div>
+
+
+                {/* CTA Section */}
+                <div className="mt-20 border-t border-white/10 pt-16">
+                    <div className="bg-dark-800 rounded-2xl p-8 md:p-12 text-center border border-white/5 relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+
+                        <h3 className="text-2xl md:text-3xl font-serif text-white mb-4 relative z-10">
+                            {lang === 'en' ? 'Experience the Extraordinary' : 'عيش تجربة استثنائية'}
+                        </h3>
+                        <p className="text-neutral-400 mb-8 max-w-2xl mx-auto relative z-10">
+                            {lang === 'en'
+                                ? 'Ready to elevate your journey? Browse our exclusive fleet of luxury vehicles or contact our concierge for a bespoke travel experience.'
+                                : 'هل أنت مستعد لرفع مستوى رحلتك؟ تصفح أسطولنا الحصري من السيارات الفاخرة أو اتصل بخدمة الكونسيرج للحصول على تجربة سفر مخصصة.'}
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
+                            <Link
+                                to="/fleet"
+                                className="w-full sm:w-auto px-8 py-3 bg-gold-500 text-black font-bold rounded hover:bg-gold-400 transition-colors"
+                            >
+                                {lang === 'en' ? 'Browse Fleet' : 'تصفح الأسطول'}
+                            </Link>
+                            <a
+                                href={`https://wa.me/${CONTACT_INFO.whatsapp}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full sm:w-auto px-8 py-3 border border-white/20 text-white rounded hover:bg-white/5 transition-colors inline-block"
+                            >
+                                {lang === 'en' ? 'Contact Concierge' : 'اتصل بالكونسيرج'}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </article >
+        </div >
     );
 };

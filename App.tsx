@@ -75,7 +75,6 @@ const AppContent: React.FC = () => {
 
             {/* Journal Routes */}
             <Route path="/journal" element={<Journal lang={lang} />} />
-            <Route path="/journal/top-5-luxury-wedding-cars-malaysia" element={<WeddingCarGuide lang={lang} />} />
             <Route path="/journal/:slug" element={<JournalPost lang={lang} />} />
 
             {/* Admin Routes */}
